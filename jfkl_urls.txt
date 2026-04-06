@@ -2,4 +2,3 @@ clib.cc.cd
 fec-hvk.cc.cd
 *.jfglss.icu
 maxlhy0424.is-a.dev
-*.pp1p.cfd
