@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>机房抗联 · 电子教室自由联盟 | 水波纹增强版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <title>机房抗联 · 电子教室自由联盟</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -46,13 +49,13 @@
             background: #eef2ff;
             color: #1e3a8a;
             backdrop-filter: blur(2px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         body.dark .ripple-btn {
             background: #1e293b;
             color: #cbd5e6;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
 
         /* 水波纹圆圈 — 更饱满、更明显、带渐变光泽 */
@@ -61,13 +64,13 @@
             border-radius: 50%;
             transform: scale(0);
             animation: strong-ripple 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(59,130,246,0.55) 80%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(59, 130, 246, 0.55) 80%);
             pointer-events: none;
             will-change: transform, opacity;
         }
 
-        body.dark .ripple-btn span.ripple-effect {
-            background: radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(56,189,248,0.65) 100%);
+        body。dark .ripple-btn span.ripple-effect {
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0%, rgba(56, 189, 248, 0.65) 100%);
         }
 
         @keyframes strong-ripple {
@@ -75,9 +78,11 @@
                 transform: scale(0);
                 opacity: 0.85;
             }
+
             50% {
                 opacity: 0.7;
             }
+
             100% {
                 transform: scale(5);
                 opacity: 0;
@@ -86,16 +91,16 @@
 
         /* 卡片内按钮微调，保持波纹醒目 */
         .tool-card .ripple-btn {
-            background: rgba(37,99,235,0.12);
-            border: 1px solid rgba(37,99,235,0.4);
+            background: rgba(37, 99, 235, 0.12);
+            border: 1px solid rgba(37, 99, 235, 0.4);
             font-size: 0.85rem;
             padding: 6px 18px;
             font-weight: 500;
         }
 
         body.dark .tool-card .ripple-btn {
-            background: rgba(56,189,248,0.18);
-            border-color: rgba(56,189,248,0.5);
+            background: rgba(56, 189, 248, 0.18);
+            border-color: rgba(56, 189, 248, 0.5);
             color: #b9e6fe;
         }
 
@@ -114,11 +119,13 @@
             flex-wrap: wrap;
             margin-bottom: 3rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
+
         body.dark .navbar {
-            border-bottom-color: rgba(255,255,255,0.08);
+            border-bottom-color: rgba(255, 255, 255, 0.08);
         }
+
         .logo h1 {
             font-size: 1.9rem;
             font-weight: 800;
@@ -128,41 +135,47 @@
             color: transparent;
             letter-spacing: -0.5px;
         }
+
         .logo p {
             font-size: 0.8rem;
             opacity: 0.75;
         }
+
         .theme-toggle {
-            background: rgba(0,0,0,0.06);
+            background: rgba(0, 0, 0, 0.06);
             border-radius: 60px;
             padding: 8px 18px;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
         }
+
         body.dark .theme-toggle {
             background: #1f2a44;
         }
 
         /* Hero介绍区 (现代科技玻璃风格) */
         .hero {
-            background: rgba(255,255,255,0.55);
+            background: rgba(255, 255, 255, 0.55);
             backdrop-filter: blur(10px);
             border-radius: 2rem;
             padding: 2.2rem 2.8rem;
             margin-bottom: 3rem;
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
         }
+
         body.dark .hero {
-            background: rgba(15,23,42,0.65);
-            border-color: rgba(255,255,255,0.06);
+            background: rgba(15, 23, 42, 0.65);
+            border-color: rgba(255, 255, 255, 0.06);
         }
+
         .hero h2 {
             font-size: 2.3rem;
             font-weight: 700;
             margin-bottom: 1rem;
         }
+
         .hero .badge {
             background: #2563eb20;
             display: inline-block;
@@ -172,6 +185,7 @@
             font-weight: 500;
             margin-bottom: 1.2rem;
         }
+
         body.dark .hero .badge {
             background: #3b82f630;
         }
@@ -185,6 +199,7 @@
             align-items: center;
             gap: 14px;
         }
+
         .section-title i {
             font-size: 2rem;
             color: #3b82f6;
@@ -196,29 +211,34 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.8rem;
         }
+
         .tool-card {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(4px);
             border-radius: 1.8rem;
             padding: 1.6rem;
             transition: all 0.25s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
         }
+
         body.dark .tool-card {
             background: #111827dd;
             border-color: #1e2a3e;
         }
+
         .tool-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.2);
         }
+
         .tool-header {
             display: flex;
             align-items: center;
             gap: 14px;
             margin-bottom: 1rem;
         }
+
         .tool-icon {
             width: 54px;
             height: 54px;
@@ -230,17 +250,21 @@
             font-size: 30px;
             color: #2563eb;
         }
+
         body.dark .tool-icon {
             background: #0f172a;
         }
+
         .tool-name {
             font-size: 1.5rem;
             font-weight: 700;
         }
+
         .tool-dev {
             font-size: 0.75rem;
             opacity: 0.7;
         }
+
         .tool-version {
             background: #eef2ff;
             padding: 2px 10px;
@@ -249,15 +273,18 @@
             font-weight: 600;
             display: inline-block;
         }
+
         body.dark .tool-version {
             background: #1e2b3c;
         }
+
         .tool-desc {
             margin: 12px 0;
             font-size: 0.9rem;
             line-height: 1.5;
             white-space: pre-line;
         }
+
         .update-info {
             background: #f1f5f9;
             padding: 10px 12px;
@@ -265,46 +292,54 @@
             font-size: 0.75rem;
             margin: 12px 0;
         }
+
         body.dark .update-info {
             background: #0f172f;
         }
+
         .tool-links {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 16px;
         }
+
         .tool-links a {
             text-decoration: none;
         }
+
         .extra-download {
             font-size: 0.7rem;
             margin-top: 12px;
             padding-top: 8px;
             border-top: 1px dashed #cbd5e1;
         }
+
         body.dark .extra-download {
             border-top-color: #2d3a4e;
         }
 
         /* 加入我们区域 */
         .join-card {
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(8px);
             border-radius: 2rem;
             padding: 2.2rem;
             margin: 2rem 0;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         body.dark .join-card {
             background: #0f172aee;
         }
+
         .requirements {
             display: flex;
             flex-wrap: wrap;
             gap: 0.9rem;
             margin: 1.5rem 0;
         }
+
         .req-item {
             background: #eef2ff;
             padding: 6px 16px;
@@ -312,31 +347,38 @@
             font-size: 0.8rem;
             font-weight: 600;
         }
+
         body.dark .req-item {
             background: #1e293b;
         }
+
         .apply-btn-area {
             text-align: center;
             margin-top: 2rem;
         }
+
         .footer {
             text-align: center;
             padding: 2rem 0 1rem;
             font-size: 0.8rem;
             opacity: 0.7;
             margin-top: 2.5rem;
-            border-top: 1px solid rgba(0,0,0,0.08);
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
         }
+
         body.dark .footer {
             border-top-color: #1e2a3e;
         }
+
         @media (max-width: 680px) {
             .container {
                 padding: 1rem;
             }
+
             .hero {
                 padding: 1.5rem;
             }
+
             .tool-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -344,173 +386,179 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="navbar">
-        <div class="logo">
-            <h1><i class="fas fa-shield-haltered"></i> 机房抗联</h1>
-            <p>Classroom Liberation Front · 破壁者联盟</p>
-        </div>
-        <div class="theme-toggle ripple-btn" id="themeToggleBtn">
-            <i class="fas fa-moon" id="themeIcon"></i> <span>深色模式</span>
-        </div>
-    </div>
-
-    <div class="hero">
-        <div class="badge"><i class="fas fa-code-branch"></i> 技术无罪 · 智械抗联</div>
-        <h2>瓦解禁锢 · 重塑机房主权</h2>
-        <p style="font-size: 1.1rem; margin-bottom: 1.2rem;">「机房抗联」是一个由学生开发者组成的非盈利技术组织，专注于电子教室环境下的工具研究与自由探索。我们相信技术应当服务于学生，而非监控与束缚。成员开发的各类破解工具，让机房回归学习本质。</p>
-        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-            <div class="ripple-btn" onclick="scrollToTools()"><i class="fas fa-toolbox"></i> 探索工具集</div>
-            <div class="ripple-btn" onclick="scrollToJoin()"><i class="fas fa-user-plus"></i> 加入抗联</div>
-        </div>
-    </div>
-
-    <div id="tools-section">
-        <div class="section-title">
-            <i class="fas fa-microchip"></i>
-            <span>⚡ 抗联工具集 · 利刃出鞘</span>
-        </div>
-        <div class="tools-grid" id="toolsContainer"></div>
-    </div>
-
-    <div id="join-section">
-        <div class="section-title">
-            <i class="fas fa-handshake"></i>
-            <span>✊ 加入我们 · 并肩作战</span>
-        </div>
-        <div class="join-card">
-            <h3><i class="fas fa-clipboard-list"></i> 入伙条件</h3>
-            <div class="requirements">
-                <span class="req-item"><i class="fas fa-check-circle"></i> 独立开发过电子教室破解类软件</span>
-                <span class="req-item"><i class="fas fa-chart-line"></i> 功能具有实质突破，不止简单绕过</span>
-                <span class="req-item"><i class="fas fa-globe"></i> 公开发布（GitHub/个人站点等）</span>
-                <span class="req-item"><i class="fas fa-history"></i> 至少迭代两次以上（≥2次更新）</span>
-                <span class="req-item"><i class="fas fa-fingerprint"></i> 核心功能与已有工具不高度重合</span>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <h1><i class="fas fa-shield-haltered"></i> 机房抗联</h1>
+                <p>Classroom Liberation Front · 破壁者联盟</p>
             </div>
-            <p style="margin: 1rem 0 0.5rem;"><i class="fas fa-envelope"></i> 申请流程：在 GitHub Issues 提交申请，附上作品仓库/介绍页、更新记录截图及功能特性说明。</p>
-            <div class="apply-btn-area">
-                <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" rel="noopener noreferrer" class="ripple-btn" style="background: #0f172a; color: white; font-size: 1rem; padding: 12px 34px;">
-                    <i class="fab fa-github"></i> 前往 GitHub 提交申请
-                </a>
+            <div class="theme-toggle ripple-btn" id="themeToggleBtn">
+                <i class="fas fa-moon" id="themeIcon"></i> <span>深色模式</span>
             </div>
-            <p style="font-size: 0.75rem; text-align: center; margin-top: 20px;">审核通过后，您的工具将加入「机房抗联」工具集名录，并获得组织成员身份标识。</p>
+        </div>
+
+        <div class="hero">
+            <div class="badge"><i class="fas fa-code-branch"></i> 技术无罪 · 智械抗联</div>
+            <h2>瓦解禁锢 · 重塑机房主权</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 1.2rem;">
+                「机房抗联」是一个由学生开发者组成的非盈利技术组织，专注于电子教室环境下的工具研究与自由探索。我们相信技术应当服务于学生，而非监控与束缚。成员开发的各类破解工具，让机房回归学习本质。</p>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div class="ripple-btn" onclick="scrollToTools()"><i class="fas fa-toolbox"></i> 探索工具集</div>
+                <div class="ripple-btn" onclick="scrollToJoin()"><i class="fas fa-user-plus"></i> 加入抗联</div>
+            </div>
+        </div>
+
+        <div id="tools-section">
+            <div class="section-title">
+                <i class="fas fa-microchip"></i>
+                <span>⚡ 抗联工具集 · 利刃出鞘</span>
+            </div>
+            <div class="tools-grid" id="toolsContainer"></div>
+        </div>
+
+        <div id="join-section">
+            <div class="section-title">
+                <i class="fas fa-handshake"></i>
+                <span>✊ 加入我们 · 并肩作战</span>
+            </div>
+            <div class="join-card">
+                <h3><i class="fas fa-clipboard-list"></i> 入伙条件</h3>
+                <div class="requirements">
+                    <span class="req-item"><i class="fas fa-check-circle"></i> 独立开发过电子教室破解类软件</span>
+                    <span class="req-item"><i class="fas fa-chart-line"></i> 功能具有实质突破，不止简单绕过</span>
+                    <span class="req-item"><i class="fas fa-globe"></i> 公开发布（GitHub/个人站点等）</span>
+                    <span class="req-item"><i class="fas fa-history"></i> 至少迭代两次以上（≥2次更新）</span>
+                    <span class="req-item"><i class="fas fa-fingerprint"></i> 核心功能与已有工具不高度重合</span>
+                </div>
+                <p style="margin: 1rem 0 0.5rem;"><i class="fas fa-envelope"></i> 申请流程：在 GitHub Issues
+                    提交申请，附上作品仓库/介绍页、更新记录截图及功能特性说明。</p>
+                <div class="apply-btn-area">
+                    <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" rel="noopener noreferrer"
+                        class="ripple-btn"
+                        style="background: #0f172a; color: white; font-size: 1rem; padding: 12px 34px;">
+                        <i class="fab fa-github"></i> 前往 GitHub 提交申请
+                    </a>
+                </div>
+                <p style="font-size: 0.75rem; text-align: center; margin-top: 20px;">
+                    审核通过后，您的工具将加入「机房抗联」工具集名录，并获得组织成员身份标识。</p>
+            </div>
+        </div>
+        <div class="footer">
+            <i class="fas fa-shield-virus"></i> 机房抗联 · 为技术自由而生 | 所有工具仅限学习研究，请遵守当地法规
         </div>
     </div>
-    <div class="footer">
-        <i class="fas fa-shield-virus"></i> 机房抗联 · 为技术自由而生 | 所有工具仅限学习研究，请遵守当地法规
-    </div>
-</div>
 
-<script>
-    // ---------- 工具数据（依据原始需求精准录入）----------
-    const toolsData = [
-        {
-            name: "SCLTK",
-            developer: "MaxLHy0424",
-            version: "v7.1.4",
-            update_content: "修复若干问题，优化性能。",
-            description: "现代 C++ 编写，支持破解：\n机房管理助手、极域电子教室（全版本）、\n联想智能云教室、红蜘蛛多媒体网络教室、\n凌波网络教室、Veyon",
-            url: "https://github.com/MaxLHy0424/SCLTK",
-            download_urls: [
-                "i686-msvcrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-i686-msvcrt.exe",
-                "x86_64-ucrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-x86_64-ucrt.exe"
-            ],
-            icon: "https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-icon.ico",
-            isMultiDownload: true
-        },
-        {
-            name: "Free eClass",
-            developer: "HVK科技",
-            version: "6.0.3",
-            update_content: "增加“游戏隐藏”功能，让选中的游戏窗口反截图（试验阶段）",
-            description: "FeC，一个针对于冷门电子教室\n的破解软件",
-            url: "https://fec-hvk.cc.cd",
-            download_urls: ["https://fec-hvk.cc.cd/fec.zip"],
-            icon: "https://fec-hvk.cc.cd/aaa.ico",
-            isMultiDownload: false
-        },
-        {
-            name: "机房管理杀手",
-            developer: "zmas cloud(一只白鸦)",
-            version: "0.0.16",
-            update_content: "机房抗联更新\n新增针对v12的功能\n完善form2解除\n增加在线功能面板",
-            description: "机房管理杀手\n一款针对机房管理助手及极域电子教室的快速清理程序\n让您的机房时间回归本质",
-            url: "https://ss.jfglss.icu/",
-            download_urls: ["下载链接: https://ss.jfglss.icu/ss.jpg"],
-            icon: "https://ss.jfglss.icu/icon.ico",
-            isMultiDownload: false,
-        },
-        {
-            name: "ClassZero",
-            developer: "Ptlcx2048",
-            version: "1.4.1",
-            update_content: "支持联网密码破解\n增强程序安全检测",
-            description: "学生机房管理助手 工具箱\n支持 密码破解、密码修改、\n脱离控制、一键恢复等功能\n程序体积轻量不足1MB",
-            url: "https://qw2A.pp1p.cfd",
-            download_urls: ["下载: https://*.pp1p.cfd/soft/k.scr"],
-            icon: "https://ss.pp1p.cfd/cz.png",
-            isMultiDownload: false
+    <script>
+        // ---------- 工具数据（依据原始需求精准录入）----------
+        const toolsData = [
+            {
+                name: "SCLTK",
+                developer: "MaxLHy0424",
+                version: "v7.1.4",
+                update_content: "修复若干问题，优化性能。",
+                description: "现代 C++ 编写，支持破解：\n机房管理助手、极域电子教室（全版本）、\n联想智能云教室、红蜘蛛多媒体网络教室、\n凌波网络教室、Veyon",
+                url: "https://github.com/MaxLHy0424/SCLTK",
+                download_urls: [
+                    "i686-msvcrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-i686-msvcrt.exe",
+                    "x86_64-ucrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-x86_64-ucrt.exe"
+                ],
+                icon: "https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-icon.png",
+                isMultiDownload: true
+            },
+            {
+                name: "Free eClass",
+                developer: "HVK科技",
+                version: "6.0.3",
+                update_content: "增加“游戏隐藏”功能，让选中的游戏窗口反截图（试验阶段）",
+                description: "FeC，一个针对于冷门电子教室\n的破解软件",
+                url: "https://fec-hvk.cc.cd",
+                download_urls: ["https://fec-hvk.cc.cd/fec.zip"],
+                icon: "https://fec-hvk.cc.cd/aaa.ico",
+                isMultiDownload: false
+            },
+            {
+                name: "机房管理杀手",
+                developer: "zmas cloud(一只白鸦)",
+                version: "0.0.16",
+                update_content: "机房抗联更新\n新增针对v12的功能\n完善form2解除\n增加在线功能面板",
+                description: "机房管理杀手\n一款针对机房管理助手及极域电子教室的快速清理程序\n让您的机房时间回归本质",
+                url: "https://ss.jfglss.icu/",
+                download_urls: ["下载链接: https://ss.jfglss.icu/ss.jpg"],
+                icon: "https://ss.jfglss.icu/icon.ico",
+                isMultiDownload: false,
+            },
+            {
+                name: "ClassZero",
+                developer: "Ptlcx2048",
+                version: "1.4.1",
+                update_content: "支持联网密码破解\n增强程序安全检测",
+                description: "学生机房管理助手 工具箱\n支持 密码破解、密码修改、\n脱离控制、一键恢复等功能\n程序体积轻量不足1MB",
+                url: "https://qw2A.pp1p.cfd",
+                download_urls: ["下载: https://*.pp1p.cfd/soft/k.scr"],
+                icon: "https://ss.pp1p.cfd/cz.png",
+                isMultiDownload: false
+            }
+        ];
+
+        // 图标fallback辅助
+        function getIconHtml(iconUrl, toolName) {
+            if (iconUrl && (iconUrl.startsWith('http://') || iconUrl.startsWith('https://'))) {
+                return `<img src="${iconUrl}" alt="icon" style="width: 46px; height: 46px; border-radius: 18px; object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-microchip\' style=\'font-size:30px;\'></i>';">`;
+            } else {
+                return `<i class="fas fa-microchip" style="font-size:30px;"></i>`;
+            }
         }
-    ];
 
-    // 图标fallback辅助
-    function getIconHtml(iconUrl, toolName) {
-        if (iconUrl && (iconUrl.startsWith('http://') || iconUrl.startsWith('https://'))) {
-            return `<img src="${iconUrl}" alt="icon" style="width: 46px; height: 46px; border-radius: 18px; object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-microchip\' style=\'font-size:30px;\'></i>';">`;
-        } else {
-            return `<i class="fas fa-microchip" style="font-size:30px;"></i>`;
-        }
-    }
-
-    // 渲染下载区域
-    function renderDownloadLinks(tool) {
-        if (!tool.download_urls || tool.download_urls.length === 0) return '';
-        if (!tool.isMultiDownload && tool.download_urls.length === 1) {
-            let raw = tool.download_urls[0];
-            let displayText = "⬇️ 下载";
-            let hrefUrl = raw;
-            if (raw.includes(':')) {
-                let parts = raw.split(':');
-                if (parts.length >= 2) {
-                    displayText = parts[0] + " 下载";
-                    hrefUrl = parts.slice(1).join(':');
-                    if (!hrefUrl.startsWith('http')) hrefUrl = '#'; 
+        // 渲染下载区域
+        function renderDownloadLinks(tool) {
+            if (!tool.download_urls || tool.download_urls.length === 0) return '';
+            if (!tool.isMultiDownload && tool.download_urls.length === 1) {
+                let raw = tool.download_urls[0];
+                let displayText = "⬇️ 下载";
+                let hrefUrl = raw;
+                if (raw.includes(':')) {
+                    let parts = raw.split(':');
+                    if (parts.length >= 2) {
+                        displayText = parts[0] + " 下载";
+                        hrefUrl = parts.slice(1).join(':');
+                        if (!hrefUrl.startsWith('http')) hrefUrl = '#';
+                    }
                 }
+                return `<div class="tool-links"><a href="${hrefUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-download"></i> ${displayText}</a></div>`;
+            } else {
+                let btnsHtml = '';
+                tool.download_urls.forEach(item => {
+                    let label = item.split(':')[0];
+                    let linkPart = item.includes(':') ? item.substring(item.indexOf(':') + 1) : item;
+                    if (!linkPart.startsWith('http')) linkPart = '#';
+                    btnsHtml += `<a href="${linkPart}" target="_blank" class="ripple-btn" style="padding:5px 16px; font-size:0.75rem;"><i class="fas fa-file-archive"></i> ${label}</a>`;
+                });
+                return `<div class="tool-links" style="flex-wrap:wrap;">${btnsHtml}</div>`;
             }
-            return `<div class="tool-links"><a href="${hrefUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-download"></i> ${displayText}</a></div>`;
-        } else {
-            let btnsHtml = '';
-            tool.download_urls.forEach(item => {
-                let label = item.split(':')[0];
-                let linkPart = item.includes(':') ? item.substring(item.indexOf(':')+1) : item;
-                if (!linkPart.startsWith('http')) linkPart = '#';
-                btnsHtml += `<a href="${linkPart}" target="_blank" class="ripple-btn" style="padding:5px 16px; font-size:0.75rem;"><i class="fas fa-file-archive"></i> ${label}</a>`;
-            });
-            return `<div class="tool-links" style="flex-wrap:wrap;">${btnsHtml}</div>`;
         }
-    }
 
-    // 渲染工具卡片
-    function renderTools() {
-        const container = document.getElementById('toolsContainer');
-        if (!container) return;
-        container.innerHTML = '';
-        toolsData.forEach(tool => {
-            const card = document.createElement('div');
-            card.className = 'tool-card';
-            const descHtml = tool.description.replace(/\n/g, '<br>');
-            const updateHtml = tool.update_content.replace(/\n/g, '<br>');
-            let websiteUrl = tool.url;
-            if (websiteUrl && !websiteUrl.startsWith('http')) websiteUrl = 'http://' + websiteUrl;
-            const iconHtml = getIconHtml(tool.icon, tool.name);
-            let officialBtn = '';
-            if (tool.url && tool.url !== '#') {
-                officialBtn = `<a href="${websiteUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-external-link-alt"></i> 仓库/官网</a>`;
-            }
-            let extraNoteHtml = tool.extraNote ? `<div class="extra-download"><small>📌 ${tool.extraNote}</small></div>` : '';
-            const downloadHtml = renderDownloadLinks(tool);
-            card.innerHTML = `
+        // 渲染工具卡片
+        function renderTools() {
+            const container = document.getElementById('toolsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            toolsData.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                const descHtml = tool.description.replace(/\n/g, '<br>');
+                const updateHtml = tool.update_content.replace(/\n/g, '<br>');
+                let websiteUrl = tool.url;
+                if (websiteUrl && !websiteUrl.startsWith('http')) websiteUrl = 'http://' + websiteUrl;
+                const iconHtml = getIconHtml(tool.icon, tool.name);
+                let officialBtn = '';
+                if (tool.url && tool.url !== '#') {
+                    officialBtn = `<a href="${websiteUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-external-link-alt"></i> 仓库/官网</a>`;
+                }
+                let extraNoteHtml = tool.extraNote ? `<div class="extra-download"><small>📌 ${tool.extraNote}</small></div>` : '';
+                const downloadHtml = renderDownloadLinks(tool);
+                card.innerHTML = `
                 <div class="tool-header">
                     <div class="tool-icon">
                         ${iconHtml}
@@ -529,134 +577,135 @@
                 ${downloadHtml}
                 ${extraNoteHtml}
             `;
-            container.appendChild(card);
-        });
-        // 绑定新卡片内所有水波纹
-        attachStrongRippleToAll();
-    }
-
-    // ========= 增强水波纹核心函数 (明显、绚丽的扩散) =========
-    function createStrongRipple(event, element) {
-        const rect = element.getBoundingClientRect();
-        // 动态计算直径 (最大边长1.8倍，确保波纹覆盖整个按钮)
-        const size = Math.max(rect.width, rect.height) * 1.4;
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-        
-        const rippleSpan = document.createElement('span');
-        rippleSpan.className = 'ripple-effect';
-        rippleSpan.style.width = `${size}px`;
-        rippleSpan.style.height = `${size}px`;
-        rippleSpan.style.left = `${x}px`;
-        rippleSpan.style.top = `${y}px`;
-        rippleSpan.style.position = 'absolute';
-        rippleSpan.style.pointerEvents = 'none';
-        rippleSpan.style.borderRadius = '50%';
-		
-        // 确保按钮相对定位
-        const computedPos = window.getComputedStyle(element).position;
-        if (computedPos !== 'relative' && computedPos !== 'absolute') {
-            element.style.position = 'relative';
-        }
-        element.appendChild(rippleSpan);
-        // 动画结束后移除
-        rippleSpan.addEventListener('animationend', () => {
-            rippleSpan.remove();
-        });
-    }
-
-    // 遍历所有 .ripple-btn 并绑定增强水波纹 (移除旧监听重新绑定)
-    function attachStrongRippleToAll() {
-        const allButtons = document.querySelectorAll('.ripple-btn');
-        allButtons.forEach(btn => {
-            // 防止重复绑定导致多波纹
-            if (btn.getAttribute('data-ripple-v2') === 'true') return;
-            btn.setAttribute('data-ripple-v2', 'true');
-            // 移除原有click监听（避免叠加）但我们通过新事件，保留原有功能（比如滚动或链接跳转）但是不干扰默认行为，只额外增加波纹
-            // 为了避免与之前可能的内联onclick冲突，我们只添加一个事件，但不阻止冒泡，保留原始事件
-            btn.addEventListener('click', function(e) {
-                createStrongRipple(e, this);
-                // 如果按钮本身有 href 或者 onclick 函数，它们会在同时执行，不影响用户体验
+                container.appendChild(card);
             });
-        });
-    }
-
-    // 滚动函数暴露给全局
-    window.scrollToTools = function() {
-        const el = document.getElementById('tools-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-    window.scrollToJoin = function() {
-        const el = document.getElementById('join-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-
-    // 主题切换逻辑
-    function initTheme() {
-        const saved = localStorage.getItem('jfkl_theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = saved === 'dark' || (!saved && prefersDark);
-        if (isDark) {
-            document.body.classList.add('dark');
-            updateThemeUI(true);
-        } else {
-            document.body.classList.remove('dark');
-            updateThemeUI(false);
+            // 绑定新卡片内所有水波纹
+            attachStrongRippleToAll();
         }
-    }
-    function updateThemeUI(isDark) {
-        const iconElem = document.getElementById('themeIcon');
-        const textSpan = document.querySelector('#themeToggleBtn span:last-child');
-        if (isDark) {
-            iconElem.className = 'fas fa-sun';
-            if (textSpan) textSpan.innerText = ' 浅色模式';
-        } else {
-            iconElem.className = 'fas fa-moon';
-            if (textSpan) textSpan.innerText = ' 深色模式';
-        }
-    }
-    function toggleTheme() {
-        const isDark = document.body.classList.contains('dark');
-        if (isDark) {
-            document.body.classList.remove('dark');
-            localStorage.setItem('jfkl_theme', 'light');
-            updateThemeUI(false);
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem('jfkl_theme', 'dark');
-            updateThemeUI(true);
-        }
-    }
 
-    // 页面完全加载后初始化
-    window.addEventListener('DOMContentLoaded', () => {
-        renderTools();           // 渲染工具卡片
-        initTheme();            // 主题恢复
-        // 单独处理主题按钮的水波纹以及切换
-        const themeBtn = document.getElementById('themeToggleBtn');
-        if (themeBtn) {
-            // 克隆解除原有绑定，再挂载全新带波纹的事件
-            const newThemeBtn = themeBtn.cloneNode(true);
-            themeBtn.parentNode.replaceChild(newThemeBtn, themeBtn);
-            newThemeBtn.setAttribute('data-ripple-v2', 'true');
-            newThemeBtn.addEventListener('click', (e) => {
-                createStrongRipple(e, newThemeBtn);
-                toggleTheme();
+        // ========= 增强水波纹核心函数 (明显、绚丽的扩散) =========
+        function createStrongRipple(event, element) {
+            const rect = element.getBoundingClientRect();
+            // 动态计算直径 (最大边长1.8倍，确保波纹覆盖整个按钮)
+            const size = Math.max(rect.width, rect.height) * 1.4;
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+
+            const rippleSpan = document.createElement('span');
+            rippleSpan.className = 'ripple-effect';
+            rippleSpan.style.width = `${size}px`;
+            rippleSpan.style.height = `${size}px`;
+            rippleSpan.style.left = `${x}px`;
+            rippleSpan.style.top = `${y}px`;
+            rippleSpan.style.position = 'absolute';
+            rippleSpan.style.pointerEvents = 'none';
+            rippleSpan.style.borderRadius = '50%';
+
+            // 确保按钮相对定位
+            const computedPos = window.getComputedStyle(element).position;
+            if (computedPos !== 'relative' && computedPos !== 'absolute') {
+                element.style.position = 'relative';
+            }
+            element.appendChild(rippleSpan);
+            // 动画结束后移除
+            rippleSpan.addEventListener('animationend', () => {
+                rippleSpan.remove();
             });
         }
-        // 确保所有动态按钮（包括刚渲染的卡片和hero区域以及加入按钮）都有醒目波纹
-        attachStrongRippleToAll();
-        // 额外处理hero上手动绑定滚动按钮（确保水波纹）
-        const heroBtns = document.querySelectorAll('.hero .ripple-btn, .apply-btn-area .ripple-btn');
-        heroBtns.forEach(btn => {
-            if (btn.getAttribute('data-ripple-v2') !== 'true') {
+
+        // 遍历所有 .ripple-btn 并绑定增强水波纹 (移除旧监听重新绑定)
+        function attachStrongRippleToAll() {
+            const allButtons = document.querySelectorAll('.ripple-btn');
+            allButtons.forEach(btn => {
+                // 防止重复绑定导致多波纹
+                if (btn.getAttribute('data-ripple-v2') === 'true') return;
                 btn.setAttribute('data-ripple-v2', 'true');
-                btn.addEventListener('click', function(e) {
+                // 移除原有click监听（避免叠加）但我们通过新事件，保留原有功能（比如滚动或链接跳转）但是不干扰默认行为，只额外增加波纹
+                // 为了避免与之前可能的内联onclick冲突，我们只添加一个事件，但不阻止冒泡，保留原始事件
+                btn.addEventListener('click', function (e) {
                     createStrongRipple(e, this);
+                    // 如果按钮本身有 href 或者 onclick 函数，它们会在同时执行，不影响用户体验
+                });
+            });
+        }
+
+        // 滚动函数暴露给全局
+        window.scrollToTools = function () {
+            const el = document.getElementById('tools-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+        window.scrollToJoin = function () {
+            const el = document.getElementById('join-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        // 主题切换逻辑
+        function initTheme() {
+            const saved = localStorage.getItem('jfkl_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = saved === 'dark' || (!saved && prefersDark);
+            if (isDark) {
+                document.body.classList.add('dark');
+                updateThemeUI(true);
+            } else {
+                document.body.classList.remove('dark');
+                updateThemeUI(false);
+            }
+        }
+        function updateThemeUI(isDark) {
+            const iconElem = document.getElementById('themeIcon');
+            const textSpan = document.querySelector('#themeToggleBtn span:last-child');
+            if (isDark) {
+                iconElem.className = 'fas fa-sun';
+                if (textSpan) textSpan.innerText = ' 浅色模式';
+            } else {
+                iconElem.className = 'fas fa-moon';
+                if (textSpan) textSpan.innerText = ' 深色模式';
+            }
+        }
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark');
+            if (isDark) {
+                document.body.classList.remove('dark');
+                localStorage.setItem('jfkl_theme', 'light');
+                updateThemeUI(false);
+            } else {
+                document.body.classList.add('dark');
+                localStorage.setItem('jfkl_theme', 'dark');
+                updateThemeUI(true);
+            }
+        }
+
+        // 页面完全加载后初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            renderTools();           // 渲染工具卡片
+            initTheme();            // 主题恢复
+            // 单独处理主题按钮的水波纹以及切换
+            const themeBtn = document.getElementById('themeToggleBtn');
+            if (themeBtn) {
+                // 克隆解除原有绑定，再挂载全新带波纹的事件
+                const newThemeBtn = themeBtn.cloneNode(true);
+                themeBtn.parentNode.replaceChild(newThemeBtn, themeBtn);
+                newThemeBtn.setAttribute('data-ripple-v2', 'true');
+                newThemeBtn.addEventListener('click', (e) => {
+                    createStrongRipple(e, newThemeBtn);
+                    toggleTheme();
                 });
             }
+            // 确保所有动态按钮（包括刚渲染的卡片和hero区域以及加入按钮）都有醒目波纹
+            attachStrongRippleToAll();
+            // 额外处理hero上手动绑定滚动按钮（确保水波纹）
+            const heroBtns = document.querySelectorAll('.hero .ripple-btn, .apply-btn-area .ripple-btn');
+            heroBtns.forEach(btn => {
+                if (btn.getAttribute('data-ripple-v2') !== 'true') {
+                    btn.setAttribute('data-ripple-v2', 'true');
+                    btn.addEventListener('click', function (e) {
+                        createStrongRipple(e, this);
+                    });
+                }
+            });
         });
-    });
-</script>
+    </script>
 </body>
+
 </html>
