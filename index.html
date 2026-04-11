@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>机房抗联 · 电子教室自由联盟 | 水波纹增强版</title>
+    <title>机房抗联 · JFKangL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.3);
+            --accent: #7c3aed;
+            --bg-light: #f4f7fc;
+            --card-light: rgba(255, 255, 255, 0.8);
+            --text-light: #0a1929;
+            --bg-dark: #030712;
+            --card-dark: rgba(17, 24, 39, 0.8);
+            --text-dark: #eef2ff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,91 +27,18 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f4f7fc;
-            color: #0a1929;
-            transition: background 0.3s ease, color 0.2s ease;
+            background: var(--bg-light);
+            color: var(--text-light);
+            transition: background 0.4s ease, color 0.2s ease;
             scroll-behavior: smooth;
+            line-height: 1.6;
         }
 
-        /* 深色主题变量 */
         body.dark {
-            background: #030712;
-            color: #eef2ff;
+            background: var(--bg-dark);
+            color: var(--text-dark);
         }
 
-        /* ========= 增强版水波纹样式 ========= */
-        .ripple-btn {
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.2s, background 0.2s;
-            border: none;
-            outline: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-weight: 600;
-            border-radius: 48px;
-            padding: 10px 26px;
-            font-size: 0.95rem;
-            background: #eef2ff;
-            color: #1e3a8a;
-            backdrop-filter: blur(2px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        body.dark .ripple-btn {
-            background: #1e293b;
-            color: #cbd5e6;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-
-        /* 水波纹圆圈 — 更饱满、更明显、带渐变光泽 */
-        .ripple-btn span.ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: strong-ripple 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(59,130,246,0.55) 80%);
-            pointer-events: none;
-            will-change: transform, opacity;
-        }
-
-        body.dark .ripple-btn span.ripple-effect {
-            background: radial-gradient(circle, rgba(255,255,255,0.85) 0%, rgba(56,189,248,0.65) 100%);
-        }
-
-        @keyframes strong-ripple {
-            0% {
-                transform: scale(0);
-                opacity: 0.85;
-            }
-            50% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: scale(5);
-                opacity: 0;
-            }
-        }
-
-        /* 卡片内按钮微调，保持波纹醒目 */
-        .tool-card .ripple-btn {
-            background: rgba(37,99,235,0.12);
-            border: 1px solid rgba(37,99,235,0.4);
-            font-size: 0.85rem;
-            padding: 6px 18px;
-            font-weight: 500;
-        }
-
-        body.dark .tool-card .ripple-btn {
-            background: rgba(56,189,248,0.18);
-            border-color: rgba(56,189,248,0.5);
-            color: #b9e6fe;
-        }
-
-        /* 整体容器 */
         .container {
             max-width: 1280px;
             margin: 0 auto;
@@ -111,552 +50,345 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             margin-bottom: 3rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid rgba(0,0,0,0.08);
         }
-        body.dark .navbar {
-            border-bottom-color: rgba(255,255,255,0.08);
-        }
+        body.dark .navbar { border-bottom-color: rgba(255,255,255,0.08); }
+
         .logo h1 {
             font-size: 1.9rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #2563eb, #7c3aed, #3b82f6);
+            background: linear-gradient(135deg, var(--primary), var(--accent), #3b82f6);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             letter-spacing: -0.5px;
         }
-        .logo p {
-            font-size: 0.8rem;
-            opacity: 0.75;
-        }
+
+        /* 主题切换按钮 */
         .theme-toggle {
             background: rgba(0,0,0,0.06);
             border-radius: 60px;
-            padding: 8px 18px;
-            font-size: 1rem;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-        body.dark .theme-toggle {
-            background: #1f2a44;
-        }
-
-        /* Hero介绍区 (现代科技玻璃风格) */
-        .hero {
-            background: rgba(255,255,255,0.55);
-            backdrop-filter: blur(10px);
-            border-radius: 2rem;
-            padding: 2.2rem 2.8rem;
-            margin-bottom: 3rem;
-            border: 1px solid rgba(0,0,0,0.08);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.05);
-        }
-        body.dark .hero {
-            background: rgba(15,23,42,0.65);
-            border-color: rgba(255,255,255,0.06);
-        }
-        .hero h2 {
-            font-size: 2.3rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-        .hero .badge {
-            background: #2563eb20;
-            display: inline-block;
-            padding: 5px 14px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-bottom: 1.2rem;
-        }
-        body.dark .hero .badge {
-            background: #3b82f630;
-        }
-
-        /* 章节标题 */
-        .section-title {
-            font-size: 1.9rem;
-            font-weight: 700;
-            margin: 2.5rem 0 1.6rem 0;
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 8px;
+            border: none;
+            color: inherit;
         }
-        .section-title i {
-            font-size: 2rem;
-            color: #3b82f6;
+        body.dark .theme-toggle { background: #1f2a44; }
+
+        /* Hero 区域 */
+        .hero {
+            background: var(--card-light);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            animation: fadeIn 0.8s ease-out;
+        }
+        body.dark .hero { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 工具卡片网格 */
+        .badge {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+
+        /* 核心工具项样式 */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 3rem 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.8rem;
-        }
-        .tool-card {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(4px);
-            border-radius: 1.8rem;
-            padding: 1.6rem;
-            transition: all 0.25s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.03);
-        }
-        body.dark .tool-card {
-            background: #111827dd;
-            border-color: #1e2a3e;
-        }
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.2);
-        }
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 1rem;
-        }
-        .tool-icon {
-            width: 54px;
-            height: 54px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: #2563eb;
-        }
-        body.dark .tool-icon {
-            background: #0f172a;
-        }
-        .tool-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .tool-dev {
-            font-size: 0.75rem;
-            opacity: 0.7;
-        }
-        .tool-version {
-            background: #eef2ff;
-            padding: 2px 10px;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        body.dark .tool-version {
-            background: #1e2b3c;
-        }
-        .tool-desc {
-            margin: 12px 0;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre-line;
-        }
-        .update-info {
-            background: #f1f5f9;
-            padding: 10px 12px;
-            border-radius: 18px;
-            font-size: 0.75rem;
-            margin: 12px 0;
-        }
-        body.dark .update-info {
-            background: #0f172f;
-        }
-        .tool-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .tool-links a {
-            text-decoration: none;
-        }
-        .extra-download {
-            font-size: 0.7rem;
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px dashed #cbd5e1;
-        }
-        body.dark .extra-download {
-            border-top-color: #2d3a4e;
+            gap: 2rem;
         }
 
-        /* 加入我们区域 */
-        .join-card {
-            background: rgba(255,255,255,0.85);
+        /* 工具卡片 - 水波纹容器 */
+        .tool-card {
+            position: relative;
+            overflow: hidden; /* 必须，限制水波纹范围 */
+            background: var(--card-light);
             backdrop-filter: blur(8px);
-            border-radius: 2rem;
-            padding: 2.2rem;
-            margin: 2rem 0;
+            border-radius: 1.5rem;
+            padding: 1.8rem;
             border: 1px solid rgba(0,0,0,0.05);
-        }
-        body.dark .join-card {
-            background: #0f172aee;
-        }
-        .requirements {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            cursor: default;
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.9rem;
-            margin: 1.5rem 0;
+            flex-direction: column;
+            user-select: none;
         }
-        .req-item {
-            background: #eef2ff;
-            padding: 6px 16px;
-            border-radius: 60px;
-            font-size: 0.8rem;
+        body.dark .tool-card { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        /* 强化水波纹动画 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0) 70%);
+            transform: scale(0);
+            pointer-events: none;
+            animation: ripple-animation 0.8s ease-out;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .tool-header { display: flex; gap: 15px; margin-bottom: 1.2rem; }
+        .tool-icon {
+            width: 60px; height: 60px;
+            background: #e2e8f0;
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; color: var(--primary);
+        }
+        body.dark .tool-icon { background: #0f172a; }
+
+        .tool-name { font-size: 1.4rem; font-weight: 700; }
+        .tool-version { font-size: 0.75rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 6px; }
+        .tool-desc { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; flex-grow: 1; }
+        
+        /* 卡片内按钮 */
+        .card-actions { display: flex; gap: 10px; margin-top: auto; position: relative; z-index: 2; }
+        .btn-sm {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            text-decoration: none;
             font-weight: 600;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            transition: 0.2s;
+            border: 1px solid rgba(37, 99, 235, 0.2);
         }
-        body.dark .req-item {
-            background: #1e293b;
+        .btn-sm:hover { background: var(--primary); color: white; }
+
+        /* 入伙区域 */
+        .join-card {
+            background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(124,58,237,0.05));
+            border-radius: 2rem;
+            padding: 2.5rem;
+            margin-top: 4rem;
+            border: 1px solid rgba(37, 99, 235, 0.1);
         }
-        .apply-btn-area {
-            text-align: center;
-            margin-top: 2rem;
-        }
-        .footer {
-            text-align: center;
-            padding: 2rem 0 1rem;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 2.5rem;
-            border-top: 1px solid rgba(0,0,0,0.08);
-        }
-        body.dark .footer {
-            border-top-color: #1e2a3e;
-        }
-        @media (max-width: 680px) {
-            .container {
-                padding: 1rem;
-            }
-            .hero {
-                padding: 1.5rem;
-            }
-            .tool-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+
+		.btn-sm:active {
+			transform: scale(0.95); /* 点击时缩小到 95% */
+		}
+		.tool-card:active {
+			transform: translateY(-4px) scale(0.98); /* 抵消一部分悬浮的位移，并轻微缩小 */
+			transition: transform 0.1s ease; /* 缩短反馈时间，让响应更灵敏 */
+		}
+		.theme-toggle:active {
+			transform: scale(0.92);
+		}
+
+        .requirements { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 1.5rem 0; }
+        .req-item { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .req-item i { color: #10b981; }
+
+        .footer { text-align: center; padding: 3rem 0; font-size: 0.8rem; opacity: 0.6; }
+
+        @media (max-width: 768px) {
+            .hero { padding: 2rem; }
+            .hero h2 { font-size: 1.8rem; }
+            .tools-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <div class="navbar">
+    <nav class="navbar">
         <div class="logo">
-            <h1><i class="fas fa-shield-haltered"></i> 机房抗联</h1>
-            <p>Classroom Liberation Front · 破壁者联盟</p>
+            <h1><i class="fas fa-shield-alt"></i> 机房抗联</h1>
+            <p style="font-size: 0.7rem; opacity: 0.6; font-weight: 500;">Classroom Liberation Front</p>
         </div>
-        <div class="theme-toggle ripple-btn" id="themeToggleBtn">
-            <i class="fas fa-moon" id="themeIcon"></i> <span>深色模式</span>
-        </div>
-    </div>
+        <button class="theme-toggle" id="themeToggleBtn">
+            <i class="fas fa-moon" id="themeIcon"></i>
+            <span id="themeText">深色模式</span>
+        </button>
+    </nav>
 
-    <div class="hero">
-        <div class="badge"><i class="fas fa-code-branch"></i> 技术无罪 · 智械抗联</div>
-        <h2>瓦解禁锢 · 重塑机房主权</h2>
-        <p style="font-size: 1.1rem; margin-bottom: 1.2rem;">「机房抗联」是一个由学生开发者组成的非盈利技术组织，专注于电子教室环境下的工具研究与自由探索。我们相信技术应当服务于学生，而非监控与束缚。成员开发的各类破解工具，让机房回归学习本质。</p>
-        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-            <div class="ripple-btn" onclick="scrollToTools()"><i class="fas fa-toolbox"></i> 探索工具集</div>
-            <div class="ripple-btn" onclick="scrollToJoin()"><i class="fas fa-user-plus"></i> 加入抗联</div>
+    <header class="hero">
+        <div class="badge">V3.0 智械协议 · 2026</div>
+        <h2>瓦解禁锢<br>重塑机房学习主权</h2>
+        <p style="max-width: 800px; margin-bottom: 2rem; font-size: 1.1rem; opacity: 0.9;">
+            我们是一个由学生开发者组成的非盈利技术组织。我们坚信技术应当回归教育的本质，而非成为监控的枷锁。
+            在这里，我们共享突破限制的利刃。
+        </p>
+        <div style="display: flex; gap: 15px;">
+            <a href="#tools-section" class="btn-sm" style="padding: 12px 25px; background: var(--primary); color: white;">探索工具集</a>
+            <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn-sm" style="padding: 12px 25px;">申请入伙</a>
         </div>
-    </div>
+    </header>
 
-    <div id="tools-section">
+    <section id="tools-section">
         <div class="section-title">
-            <i class="fas fa-microchip"></i>
-            <span>⚡ 抗联工具集 · 利刃出鞘</span>
+            <i class="fas fa-terminal"></i>
+            <span>⚡ 抗联利刃库</span>
         </div>
-        <div class="tools-grid" id="toolsContainer"></div>
-    </div>
+        <div class="tools-grid" id="toolsContainer">
+            </div>
+    </section>
 
-    <div id="join-section">
-        <div class="section-title">
-            <i class="fas fa-handshake"></i>
-            <span>✊ 加入我们 · 并肩作战</span>
+    <section class="join-card">
+        <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">✊ 成为“破壁者”</h3>
+        <p>我们欢迎每一位有志于通过技术改变现状的开发者。只要你的作品符合以下条件：</p>
+        <div class="requirements">
+            <div class="req-item"><i class="fas fa-check"></i> 具有实质性功能突破</div>
+            <div class="req-item"><i class="fas fa-check"></i> 独立开发的原创工具</div>
+            <div class="req-item"><i class="fas fa-check"></i> 至少经过两次版本迭代</div>
+            <div class="req-item"><i class="fas fa-check"></i> 代码仓库公开发布</div>
         </div>
-        <div class="join-card">
-            <h3><i class="fas fa-clipboard-list"></i> 入伙条件</h3>
-            <div class="requirements">
-                <span class="req-item"><i class="fas fa-check-circle"></i> 独立开发过电子教室破解类软件</span>
-                <span class="req-item"><i class="fas fa-chart-line"></i> 功能具有实质突破，不止简单绕过</span>
-                <span class="req-item"><i class="fas fa-globe"></i> 公开发布（GitHub/个人站点等）</span>
-                <span class="req-item"><i class="fas fa-history"></i> 至少迭代两次以上（≥2次更新）</span>
-                <span class="req-item"><i class="fas fa-fingerprint"></i> 核心功能与已有工具不高度重合</span>
-            </div>
-            <p style="margin: 1rem 0 0.5rem;"><i class="fas fa-envelope"></i> 申请流程：在 GitHub Issues 提交申请，附上作品仓库/介绍页、更新记录截图及功能特性说明。</p>
-            <div class="apply-btn-area">
-                <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" rel="noopener noreferrer" class="ripple-btn" style="background: #0f172a; color: white; font-size: 1rem; padding: 12px 34px;">
-                    <i class="fab fa-github"></i> 前往 GitHub 提交申请
-                </a>
-            </div>
-            <p style="font-size: 0.75rem; text-align: center; margin-top: 20px;">审核通过后，您的工具将加入「机房抗联」工具集名录，并获得组织成员身份标识。</p>
-        </div>
-    </div>
-    <div class="footer">
-        <i class="fas fa-shield-virus"></i> 机房抗联 · 为技术自由而生 | 所有工具仅限学习研究，请遵守当地法规
-    </div>
+        <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn-sm" style="display: inline-block; margin-top: 10px;">
+            <i class="fab fa-github"></i> 在 GitHub 提交入伙申请
+        </a>
+    </section>
+
+    <footer class="footer">
+        <p><i class="fas fa-code"></i> 机房抗联 · 技术无罪 | 2024 - 2026</p>
+        <p style="margin-top: 10px; font-size: 0.7rem;">仅限技术交流与学习研究，请自觉遵守当地法律法规。</p>
+    </footer>
 </div>
 
 <script>
-    // ---------- 工具数据（依据原始需求精准录入）----------
+    // 工具数据
     const toolsData = [
         {
             name: "SCLTK",
-            developer: "MaxLHy0424",
-            version: "v7.1.4",
-            update_content: "修复若干问题，优化性能。",
-            description: "现代 C++ 编写，支持破解：\n机房管理助手、极域电子教室（全版本）、\n联想智能云教室、红蜘蛛多媒体网络教室、\n凌波网络教室、Veyon",
-            url: "https://github.com/MaxLHy0424/SCLTK",
-            download_urls: [
-                "i686-msvcrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-i686-msvcrt.exe",
-                "x86_64-ucrt 版本: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-x86_64-ucrt.exe"
-            ],
-            icon: "https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-icon.ico",
-            isMultiDownload: true
+            dev: "MaxLHy0424",
+            ver: "v7.1.4",
+            desc: "现代 C++ 构建，支持全版本极域、联想云教室、红蜘蛛、Veyon 等主流环境的深度破解与接管。",
+            link: "https://github.com/MaxLHy0424/SCLTK",
+            icon: "fas fa-microchip"
         },
         {
             name: "Free eClass",
-            developer: "HVK科技",
-            version: "6.0.3",
-            update_content: "增加“游戏隐藏”功能，让选中的游戏窗口反截图（试验阶段）",
-            description: "FeC，一个针对于冷门电子教室\n的破解软件",
-            url: "https://fec-hvk.cc.cd",
-            download_urls: ["https://fec-hvk.cc.cd/fec.zip"],
-            icon: "https://fec-hvk.cc.cd/aaa.ico",
-            isMultiDownload: false
+            dev: "HVK科技",
+            ver: "v6.0.3",
+            desc: "专为冷门电子教室设计，独家“游戏隐藏”模式，反截图试验阶段功能，让选中的窗口消失在教师端。",
+            link: "http://fec-hvk.cc.cd",
+            icon: "fas fa-ghost"
         },
         {
             name: "机房管理杀手",
-            developer: "zmas cloud(一只白鸦)",
-            version: "0.0.16",
-            update_content: "机房抗联更新\n新增针对v12的功能\n完善form2解除\n增加在线功能面板",
-            description: "机房管理杀手\n一款针对机房管理助手及极域电子教室的快速清理程序\n让您的机房时间回归本质",
-            url: "https://ss.jfglss.icu/",
-            download_urls: ["下载链接: https://ss.jfglss.icu/ss.jpg"],
-            icon: "https://ss.jfglss.icu/icon.ico",
-            isMultiDownload: false,
+            dev: "zmas cloud",
+            ver: "v0.0.16",
+            desc: "针对机房管理助手及极域 V12 的快速清理程序，一键恢复纯净系统环境，支持在线功能面板。",
+            link: "http://65rnuilTGo.jfglss.icu/",
+            icon: "fas fa-skull-crossbones"
         },
         {
             name: "ClassZero",
-            developer: "Ptlcx2048",
-            version: "1.4.1",
-            update_content: "支持联网密码破解\n增强程序安全检测",
-            description: "学生机房管理助手 工具箱\n支持 密码破解、密码修改、\n脱离控制、一键恢复等功能\n程序体积轻量不足1MB",
-            url: "https://qw2A.pp1p.cfd",
-            download_urls: ["下载: https://*.pp1p.cfd/soft/k.scr"],
-            icon: "https://ss.pp1p.cfd/cz.png",
-            isMultiDownload: false
+            dev: "Ptlcx2048",
+            ver: "v1.4.1",
+            desc: "极致轻量化（<1MB），支持联网密码破解、脱离控制、一键恢复，是快速突围的便携利器。",
+            link: "https://tQCzrCwvK8.pp1p.cfd",
+            icon: "fas fa-bolt"
         }
     ];
 
-    // 图标fallback辅助
-    function getIconHtml(iconUrl, toolName) {
-        if (iconUrl && (iconUrl.startsWith('http://') || iconUrl.startsWith('https://'))) {
-            return `<img src="${iconUrl}" alt="icon" style="width: 46px; height: 46px; border-radius: 18px; object-fit: cover;" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-microchip\' style=\'font-size:30px;\'></i>';">`;
-        } else {
-            return `<i class="fas fa-microchip" style="font-size:30px;"></i>`;
-        }
-    }
-
-    // 渲染下载区域
-    function renderDownloadLinks(tool) {
-        if (!tool.download_urls || tool.download_urls.length === 0) return '';
-        if (!tool.isMultiDownload && tool.download_urls.length === 1) {
-            let raw = tool.download_urls[0];
-            let displayText = "⬇️ 下载";
-            let hrefUrl = raw;
-            if (raw.includes(':')) {
-                let parts = raw.split(':');
-                if (parts.length >= 2) {
-                    displayText = parts[0] + " 下载";
-                    hrefUrl = parts.slice(1).join(':');
-                    if (!hrefUrl.startsWith('http')) hrefUrl = '#'; 
-                }
-            }
-            return `<div class="tool-links"><a href="${hrefUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-download"></i> ${displayText}</a></div>`;
-        } else {
-            let btnsHtml = '';
-            tool.download_urls.forEach(item => {
-                let label = item.split(':')[0];
-                let linkPart = item.includes(':') ? item.substring(item.indexOf(':')+1) : item;
-                if (!linkPart.startsWith('http')) linkPart = '#';
-                btnsHtml += `<a href="${linkPart}" target="_blank" class="ripple-btn" style="padding:5px 16px; font-size:0.75rem;"><i class="fas fa-file-archive"></i> ${label}</a>`;
-            });
-            return `<div class="tool-links" style="flex-wrap:wrap;">${btnsHtml}</div>`;
-        }
-    }
-
-    // 渲染工具卡片
-    function renderTools() {
-        const container = document.getElementById('toolsContainer');
-        if (!container) return;
-        container.innerHTML = '';
-        toolsData.forEach(tool => {
-            const card = document.createElement('div');
-            card.className = 'tool-card';
-            const descHtml = tool.description.replace(/\n/g, '<br>');
-            const updateHtml = tool.update_content.replace(/\n/g, '<br>');
-            let websiteUrl = tool.url;
-            if (websiteUrl && !websiteUrl.startsWith('http')) websiteUrl = 'http://' + websiteUrl;
-            const iconHtml = getIconHtml(tool.icon, tool.name);
-            let officialBtn = '';
-            if (tool.url && tool.url !== '#') {
-                officialBtn = `<a href="${websiteUrl}" target="_blank" class="ripple-btn" rel="noopener"><i class="fas fa-external-link-alt"></i> 仓库/官网</a>`;
-            }
-            let extraNoteHtml = tool.extraNote ? `<div class="extra-download"><small>📌 ${tool.extraNote}</small></div>` : '';
-            const downloadHtml = renderDownloadLinks(tool);
-            card.innerHTML = `
-                <div class="tool-header">
-                    <div class="tool-icon">
-                        ${iconHtml}
-                    </div>
-                    <div>
-                        <div class="tool-name">${tool.name}</div>
-                        <div class="tool-dev"><i class="fas fa-user-astronaut"></i> ${tool.developer}</div>
-                        <span class="tool-version"><i class="fas fa-tag"></i> ${tool.version}</span>
-                    </div>
+    // 渲染卡片
+    const container = document.getElementById('toolsContainer');
+    toolsData.forEach(tool => {
+        const card = document.createElement('div');
+        card.className = 'tool-card';
+        card.innerHTML = `
+            <div class="tool-header">
+                <div class="tool-icon"><i class="${tool.icon}"></i></div>
+                <div>
+                    <div class="tool-name">${tool.name} <span class="tool-version">${tool.ver}</span></div>
+                    <div style="font-size: 0.7rem; opacity: 0.6;">开发者: ${tool.dev}</div>
                 </div>
-                <div class="tool-desc">${descHtml}</div>
-                <div class="update-info"><i class="fas fa-sync-alt"></i> 最近更新：${updateHtml}</div>
-                <div style="display: flex; gap: 10px; margin-top: 6px;">
-                    ${officialBtn}
-                </div>
-                ${downloadHtml}
-                ${extraNoteHtml}
-            `;
-            container.appendChild(card);
-        });
-        // 绑定新卡片内所有水波纹
-        attachStrongRippleToAll();
-    }
+            </div>
+            <p class="tool-desc">${tool.desc}</p>
+            <div class="card-actions">
+                <a href="${tool.link}" target="_blank" class="btn-sm"><i class="fas fa-external-link-alt"></i> 获取作品</a>
+            </div>
+        `;
 
-    // ========= 增强水波纹核心函数 (明显、绚丽的扩散) =========
-    function createStrongRipple(event, element) {
-        const rect = element.getBoundingClientRect();
-        // 动态计算直径 (最大边长1.8倍，确保波纹覆盖整个按钮)
-        const size = Math.max(rect.width, rect.height) * 1.4;
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
-        
-        const rippleSpan = document.createElement('span');
-        rippleSpan.className = 'ripple-effect';
-        rippleSpan.style.width = `${size}px`;
-        rippleSpan.style.height = `${size}px`;
-        rippleSpan.style.left = `${x}px`;
-        rippleSpan.style.top = `${y}px`;
-        rippleSpan.style.position = 'absolute';
-        rippleSpan.style.pointerEvents = 'none';
-        rippleSpan.style.borderRadius = '50%';
-		
-        // 确保按钮相对定位
-        const computedPos = window.getComputedStyle(element).position;
-        if (computedPos !== 'relative' && computedPos !== 'absolute') {
-            element.style.position = 'relative';
-        }
-        element.appendChild(rippleSpan);
-        // 动画结束后移除
-        rippleSpan.addEventListener('animationend', () => {
-            rippleSpan.remove();
-        });
-    }
+        // 核心：点击卡片任何位置触发水波纹
+        card.addEventListener('click', function(e) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-    // 遍历所有 .ripple-btn 并绑定增强水波纹 (移除旧监听重新绑定)
-    function attachStrongRippleToAll() {
-        const allButtons = document.querySelectorAll('.ripple-btn');
-        allButtons.forEach(btn => {
-            // 防止重复绑定导致多波纹
-            if (btn.getAttribute('data-ripple-v2') === 'true') return;
-            btn.setAttribute('data-ripple-v2', 'true');
-            // 移除原有click监听（避免叠加）但我们通过新事件，保留原有功能（比如滚动或链接跳转）但是不干扰默认行为，只额外增加波纹
-            // 为了避免与之前可能的内联onclick冲突，我们只添加一个事件，但不阻止冒泡，保留原始事件
-            btn.addEventListener('click', function(e) {
-                createStrongRipple(e, this);
-                // 如果按钮本身有 href 或者 onclick 函数，它们会在同时执行，不影响用户体验
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            
+            // 计算波纹直径，确保能覆盖整个卡片
+            const size = Math.max(rect.width, rect.height) * 2;
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${x - size/2}px`;
+            ripple.style.top = `${y - size/2}px`;
+
+            this.appendChild(ripple);
+
+            // 动画结束后移除元素
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
             });
         });
-    }
 
-    // 滚动函数暴露给全局
-    window.scrollToTools = function() {
-        const el = document.getElementById('tools-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-    window.scrollToJoin = function() {
-        const el = document.getElementById('join-section');
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
+        container.appendChild(card);
+    });
 
     // 主题切换逻辑
-    function initTheme() {
-        const saved = localStorage.getItem('jfkl_theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const isDark = saved === 'dark' || (!saved && prefersDark);
-        if (isDark) {
-            document.body.classList.add('dark');
-            updateThemeUI(true);
-        } else {
-            document.body.classList.remove('dark');
-            updateThemeUI(false);
-        }
-    }
-    function updateThemeUI(isDark) {
-        const iconElem = document.getElementById('themeIcon');
-        const textSpan = document.querySelector('#themeToggleBtn span:last-child');
-        if (isDark) {
-            iconElem.className = 'fas fa-sun';
-            if (textSpan) textSpan.innerText = ' 浅色模式';
-        } else {
-            iconElem.className = 'fas fa-moon';
-            if (textSpan) textSpan.innerText = ' 深色模式';
-        }
-    }
-    function toggleTheme() {
-        const isDark = document.body.classList.contains('dark');
-        if (isDark) {
-            document.body.classList.remove('dark');
-            localStorage.setItem('jfkl_theme', 'light');
-            updateThemeUI(false);
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem('jfkl_theme', 'dark');
-            updateThemeUI(true);
-        }
-    }
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
 
-    // 页面完全加载后初始化
-    window.addEventListener('DOMContentLoaded', () => {
-        renderTools();           // 渲染工具卡片
-        initTheme();            // 主题恢复
-        // 单独处理主题按钮的水波纹以及切换
-        const themeBtn = document.getElementById('themeToggleBtn');
-        if (themeBtn) {
-            // 克隆解除原有绑定，再挂载全新带波纹的事件
-            const newThemeBtn = themeBtn.cloneNode(true);
-            themeBtn.parentNode.replaceChild(newThemeBtn, themeBtn);
-            newThemeBtn.setAttribute('data-ripple-v2', 'true');
-            newThemeBtn.addEventListener('click', (e) => {
-                createStrongRipple(e, newThemeBtn);
-                toggleTheme();
-            });
-        }
-        // 确保所有动态按钮（包括刚渲染的卡片和hero区域以及加入按钮）都有醒目波纹
-        attachStrongRippleToAll();
-        // 额外处理hero上手动绑定滚动按钮（确保水波纹）
-        const heroBtns = document.querySelectorAll('.hero .ripple-btn, .apply-btn-area .ripple-btn');
-        heroBtns.forEach(btn => {
-            if (btn.getAttribute('data-ripple-v2') !== 'true') {
-                btn.setAttribute('data-ripple-v2', 'true');
-                btn.addEventListener('click', function(e) {
-                    createStrongRipple(e, this);
-                });
-            }
-        });
+    themeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        const isDark = document.body.classList.contains('dark');
+        themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        themeText.innerText = isDark ? '浅色模式' : '深色模式';
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
     });
+
+    // 读取本地配置
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+        themeIcon.className = 'fas fa-sun';
+        themeText.innerText = '浅色模式';
+    }
 </script>
+
 </body>
 </html>
