@@ -6,6 +6,8 @@
     <title>机房抗联 · 破壁者联盟</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- iconv-lite 用于 GBK 解码 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iconv-lite/0.6.3/iconv-lite.min.js"></script>
     <style>
         :root {
             --primary: #2563eb;
@@ -165,6 +167,11 @@
             font-family: monospace;
             font-size: 0.9rem;
         }
+        .debug-info {
+            background: rgba(0,0,0,0.05); border-radius: 12px;
+            padding: 10px; margin: 10px 0; font-size: 0.8rem;
+        }
+        body.dark .debug-info { background: rgba(255,255,255,0.05); }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
@@ -174,11 +181,6 @@
             .hero-actions { flex-direction: column; align-items: stretch; }
             .btn { justify-content: center; }
         }
-        .debug-info {
-            background: rgba(0,0,0,0.05); border-radius: 12px;
-            padding: 10px; margin: 10px 0; font-size: 0.8rem;
-        }
-        body.dark .debug-info { background: rgba(255,255,255,0.05); }
     </style>
 </head>
 <body>
@@ -222,6 +224,9 @@
             </div>
         </div>
         <div id="errorDetails" style="grid-column:1/-1;"></div>
+        <div style="text-align:center; margin: 20px 0;">
+            <button class="btn" id="retryBtn" style="display:none;"><i class="fas fa-sync-alt"></i> 重新加载</button>
+        </div>
     </section>
 
     <section class="join-card">
@@ -304,10 +309,10 @@
             return m;
         }
 
-        // 直连请求（无代理）
+        // 带编码处理的 fetch
         const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-        async function fetchManifestDirect(url, timeoutMs = 5000) {
+        async function fetchManifestDirect(url, timeoutMs = 8000) {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
             try {
@@ -315,7 +320,7 @@
                     method: 'GET',
                     headers: {
                         'User-Agent': PC_UA,
-                        'Accept': 'application/json',
+                        'Accept': 'application/json, text/plain, */*',
                     },
                     signal: controller.signal,
                     cache: 'no-cache',
@@ -324,10 +329,43 @@
                 });
                 clearTimeout(timeoutId);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-                const text = await resp.text();
-                try { return JSON.parse(text); } catch { throw new Error('响应非 JSON'); }
+                
+                const buffer = await resp.arrayBuffer();
+                const uint8Array = new Uint8Array(buffer);
+                
+                let text;
+                try {
+                    // 尝试 UTF-8
+                    text = new TextDecoder('utf-8', { fatal: true }).decode(uint8Array);
+                } catch (utfError) {
+                    // 尝试 GBK
+                    try {
+                        if (typeof iconv !== 'undefined') {
+                            // 使用 iconv-lite
+                            text = iconv.decode(Buffer.from(uint8Array), 'gbk');
+                        } else if (typeof TextDecoder !== 'undefined' && TextDecoder.prototype.decode) {
+                            // 浏览器可能支持 'gbk' 编码标签 (Chrome 等)
+                            text = new TextDecoder('gbk').decode(uint8Array);
+                        } else {
+                            // 降级为 ISO-8859-1
+                            text = new TextDecoder('iso-8859-1').decode(uint8Array);
+                        }
+                    } catch (e) {
+                        text = new TextDecoder('iso-8859-1').decode(uint8Array);
+                    }
+                }
+                
+                try {
+                    return JSON.parse(text);
+                } catch (jsonError) {
+                    throw new Error('JSON 解析失败，可能编码错误。原始内容前100字符: ' + text.substring(0, 100));
+                }
             } catch (e) {
                 clearTimeout(timeoutId);
+                if (e.name === 'AbortError') throw new Error('请求超时');
+                if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+                    throw new Error('CORS 跨域或网络错误：服务器未允许跨域访问。');
+                }
                 throw e;
             }
         }
@@ -386,7 +424,7 @@
             return card;
         }
 
-        // 备用演示数据（当所有源失败时自动使用）
+        // 备用数据
         const FALLBACK_MANIFESTS = [
             {
                 name: 'SCLTK (备用示例)',
@@ -412,10 +450,12 @@
 
         const container = document.getElementById('toolsContainer');
         const errorDetailsDiv = document.getElementById('errorDetails');
+        const retryBtn = document.getElementById('retryBtn');
 
         function showLoading(msg) {
             container.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> ${msg}</div>`;
             errorDetailsDiv.innerHTML = '';
+            retryBtn.style.display = 'none';
         }
 
         function showErrorWithDetails(summary, details) {
@@ -423,9 +463,9 @@
             if (details) {
                 errorDetailsDiv.innerHTML = `<div class="debug-info"><strong>调试信息：</strong><br>${details}</div>`;
             }
+            retryBtn.style.display = 'inline-block';
         }
 
-        // 自动加载备用数据
         function loadFallback() {
             container.innerHTML = '';
             FALLBACK_MANIFESTS.forEach(m => {
@@ -438,6 +478,8 @@
             hint.style.padding = '0.5rem';
             hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。';
             container.appendChild(hint);
+            errorDetailsDiv.innerHTML = '';
+            retryBtn.style.display = 'inline-block';
         }
 
         async function loadTools() {
@@ -464,7 +506,7 @@
                 const fetchOne = async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const json = await fetchManifestDirect(manifestUrl, 5000);
+                        const json = await fetchManifestDirect(manifestUrl, 8000);
                         return { base, manifest: json, ok: true, error: null };
                     } catch (e) {
                         return { base, ok: false, error: e.message };
@@ -473,7 +515,6 @@
 
                 const results = await Promise.all(baseUrls.map(fetchOne));
                 
-                // 收集错误详情
                 let errorLog = '';
                 results.forEach(r => {
                     if (!r.ok) {
@@ -495,11 +536,11 @@
                 });
 
                 if (rendered === 0) {
-                    showErrorWithDetails('所有源直连失败。', errorLog);
-                    // 自动加载备用数据
+                    showErrorWithDetails('所有源直连失败（CORS 限制）。', errorLog);
                     loadFallback();
                 } else {
-                    errorDetailsDiv.innerHTML = ''; // 清空调试信息
+                    errorDetailsDiv.innerHTML = '';
+                    retryBtn.style.display = 'none';
                     const failed = results.length - rendered;
                     if (failed > 0) {
                         const hint = document.createElement('div');
@@ -517,9 +558,9 @@
             }
         }
 
+        retryBtn.addEventListener('click', loadTools);
         loadTools();
 
-        // 工具箱按钮动画
         const toolboxBtn = document.getElementById('toolboxDownloadBtn');
         if (toolboxBtn) {
             toolboxBtn.addEventListener('click', () => {
@@ -528,7 +569,6 @@
             });
         }
 
-        // 平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
                 const href = a.getAttribute('href');
