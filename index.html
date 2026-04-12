@@ -162,7 +162,6 @@
             color: #dc2626; background: rgba(220,38,38,0.1);
             padding: 1rem; border-radius: 16px;
         }
-        .retry-indicator { margin-top: 10px; font-size: 0.9rem; opacity: 0.8; }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
@@ -214,7 +213,7 @@
         </div>
         <div class="tools-grid" id="toolsContainer">
             <div class="loading-placeholder">
-                <i class="fas fa-spinner fa-pulse"></i> 正在加载本地列表 (jfkl_urls.txt) ...
+                <i class="fas fa-spinner fa-pulse"></i> 正在读取本地 jfkl_urls.txt ...
             </div>
         </div>
         <div class="demo-controls" id="demoControls" style="display: none;">
@@ -302,55 +301,54 @@
             return m;
         }
 
-        // ---------- 请求 manifest (带 CORS 代理降级) ----------
-        const PROXY_LIST = [
-            'https://api.allorigins.win/raw?url=',
-            'https://corsproxy.io/?',
-            'https://cors-anywhere.herokuapp.com/'
-        ];
+        // ---------- 请求 manifest：先直连，失败后使用 corsproxy.io ----------
         const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-        async function fetchManifestWithFallback(url, maxRetries = 2, timeoutMs = 5000) {
-            const attemptRequest = async (fetchUrl) => {
+        async function fetchManifest(url, timeoutMs = 5000) {
+            // 1. 直连尝试
+            try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+                const resp = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'User-Agent': PC_UA,
+                        'Accept': 'application/json',
+                    },
+                    signal: controller.signal,
+                    cache: 'no-cache',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                clearTimeout(timeoutId);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const text = await resp.text();
+                try { return JSON.parse(text); } catch { throw new Error('非 JSON 响应'); }
+            } catch (directError) {
+                console.warn(`直连失败 (${url}):`, directError.message);
+                // 2. 代理尝试：corsproxy.io
+                const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
                 try {
-                    const resp = await fetch(fetchUrl, {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+                    const resp = await fetch(proxyUrl, {
                         method: 'GET',
                         headers: {
                             'User-Agent': PC_UA,
                             'Accept': 'application/json',
                         },
                         signal: controller.signal,
-                        cache: 'no-cache',
-                        mode: 'cors',
-                        credentials: 'omit'
+                        cache: 'no-cache'
                     });
                     clearTimeout(timeoutId);
                     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                     const text = await resp.text();
-                    try { return JSON.parse(text); } catch { throw new Error('非 JSON 响应'); }
-                } catch (e) {
-                    clearTimeout(timeoutId);
-                    throw e;
-                }
-            };
-
-            // 直接请求 + 重试
-            for (let retry = 0; retry <= maxRetries; retry++) {
-                try { return await attemptRequest(url); }
-                catch (e) { if (retry === maxRetries) console.warn(`直连失败: ${url}`, e); else await new Promise(r => setTimeout(r, 600)); }
-            }
-
-            // 代理降级
-            for (const proxy of PROXY_LIST) {
-                const proxyUrl = proxy + encodeURIComponent(url);
-                for (let retry = 0; retry <= 1; retry++) {
-                    try { return await attemptRequest(proxyUrl); }
-                    catch (e) { if (retry === 1) console.warn(`代理 ${proxy} 失败`, e); else await new Promise(r => setTimeout(r, 400)); }
+                    try { return JSON.parse(text); } catch { throw new Error('代理响应非 JSON'); }
+                } catch (proxyError) {
+                    console.warn(`corsproxy.io 失败 (${proxyUrl}):`, proxyError.message);
+                    throw new Error(`直连与代理均失败: ${directError.message} / ${proxyError.message}`);
                 }
             }
-            throw new Error(`所有尝试失败 (直连+${PROXY_LIST.length}代理)`);
         }
 
         // ---------- 创建卡片 ----------
@@ -419,12 +417,11 @@
             demoControls.style.display = 'block';
         }
 
-        // 加载工具（核心流程）
+        // 加载工具主流程
         async function loadTools() {
             demoControls.style.display = 'none';
             showLoading('正在读取本地 jfkl_urls.txt ...');
             try {
-                // 1. 本地直连获取列表文件
                 const listResp = await fetch('./jfkl_urls.txt', { cache: 'no-cache' });
                 if (!listResp.ok) throw new Error(`HTTP ${listResp.status} (列表文件不存在或无法读取)`);
                 const text = await listResp.text();
@@ -440,12 +437,12 @@
                     return;
                 }
 
-                showLoading(`正在从 ${baseUrls.length} 个源拉取数据 (支持CORS代理) ...`);
+                showLoading(`正在从 ${baseUrls.length} 个源拉取数据 (直连 → corsproxy.io 代理) ...`);
 
                 const fetchOne = async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const json = await fetchManifestWithFallback(manifestUrl, 2, 4000);
+                        const json = await fetchManifest(manifestUrl, 5000);
                         return { base, manifest: json, ok: true };
                     } catch (e) {
                         console.warn(`[失败] ${manifestUrl}`, e);
@@ -466,7 +463,7 @@
                 });
 
                 if (rendered === 0) {
-                    showError('所有源加载失败。可能原因：CORS限制、网络问题或manifest格式错误。');
+                    showError('所有源加载失败 (直连+代理均无效)。');
                 } else {
                     demoControls.style.display = 'none';
                     const failed = results.length - rendered;
