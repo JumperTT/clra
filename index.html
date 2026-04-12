@@ -6,7 +6,6 @@
     <title>机房抗联 · 破壁者联盟</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- iconv-lite 用于 GBK 解码 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/iconv-lite/0.6.3/iconv-lite.min.js"></script>
     <style>
         :root {
@@ -173,6 +172,9 @@
         }
         body.dark .debug-info { background: rgba(255,255,255,0.05); }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
+        .proxy-toggle {
+            display: flex; align-items: center; gap: 8px; margin: 10px 0;
+        }
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
             .hero { padding: 2rem 1.5rem; }
@@ -217,6 +219,14 @@
         <div class="section-title">
             <i class="fas fa-terminal"></i>
             <span>⚡ 抗联利刃库 · 动态加载</span>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <div class="proxy-toggle">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="useProxyCheckbox"> 
+                    <i class="fas fa-shield-hal"></i> 使用 CORS 代理 (corsproxy.io)
+                </label>
+            </div>
         </div>
         <div class="tools-grid" id="toolsContainer">
             <div class="loading-placeholder">
@@ -309,14 +319,20 @@
             return m;
         }
 
-        // 带编码处理的 fetch
+        // 带编码处理的 fetch (支持可选代理)
         const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+        const useProxyCheckbox = document.getElementById('useProxyCheckbox');
 
-        async function fetchManifestDirect(url, timeoutMs = 8000) {
+        async function fetchManifest(url, timeoutMs = 8000) {
+            let finalUrl = url;
+            if (useProxyCheckbox.checked) {
+                finalUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+            }
+            
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
             try {
-                const resp = await fetch(url, {
+                const resp = await fetch(finalUrl, {
                     method: 'GET',
                     headers: {
                         'User-Agent': PC_UA,
@@ -335,20 +351,13 @@
                 
                 let text;
                 try {
-                    // 尝试 UTF-8
                     text = new TextDecoder('utf-8', { fatal: true }).decode(uint8Array);
                 } catch (utfError) {
-                    // 尝试 GBK
                     try {
                         if (typeof iconv !== 'undefined') {
-                            // 使用 iconv-lite
                             text = iconv.decode(Buffer.from(uint8Array), 'gbk');
-                        } else if (typeof TextDecoder !== 'undefined' && TextDecoder.prototype.decode) {
-                            // 浏览器可能支持 'gbk' 编码标签 (Chrome 等)
-                            text = new TextDecoder('gbk').decode(uint8Array);
                         } else {
-                            // 降级为 ISO-8859-1
-                            text = new TextDecoder('iso-8859-1').decode(uint8Array);
+                            text = new TextDecoder('gbk').decode(uint8Array);
                         }
                     } catch (e) {
                         text = new TextDecoder('iso-8859-1').decode(uint8Array);
@@ -358,13 +367,17 @@
                 try {
                     return JSON.parse(text);
                 } catch (jsonError) {
-                    throw new Error('JSON 解析失败，可能编码错误。原始内容前100字符: ' + text.substring(0, 100));
+                    throw new Error('JSON 解析失败，可能编码错误。内容前100字符: ' + text.substring(0, 100));
                 }
             } catch (e) {
                 clearTimeout(timeoutId);
                 if (e.name === 'AbortError') throw new Error('请求超时');
                 if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-                    throw new Error('CORS 跨域或网络错误：服务器未允许跨域访问。');
+                    if (useProxyCheckbox.checked) {
+                        throw new Error('代理请求失败，可能是代理服务不可用。');
+                    } else {
+                        throw new Error('CORS 跨域或网络错误：服务器未允许跨域访问。可尝试勾选上方代理。');
+                    }
                 }
                 throw e;
             }
@@ -476,7 +489,7 @@
             hint.className = 'loading-placeholder';
             hint.style.gridColumn = '1/-1';
             hint.style.padding = '0.5rem';
-            hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。';
+            hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。<br>如需获取真实数据，请勾选上方代理后重试。';
             container.appendChild(hint);
             errorDetailsDiv.innerHTML = '';
             retryBtn.style.display = 'inline-block';
@@ -501,12 +514,13 @@
                     return;
                 }
 
-                showLoading(`正在从 ${baseUrls.length} 个源直连获取数据...`);
+                const proxyStatus = useProxyCheckbox.checked ? ' (使用代理)' : ' (直连)';
+                showLoading(`正在从 ${baseUrls.length} 个源获取数据${proxyStatus}...`);
                 
                 const fetchOne = async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const json = await fetchManifestDirect(manifestUrl, 8000);
+                        const json = await fetchManifest(manifestUrl, 8000);
                         return { base, manifest: json, ok: true, error: null };
                     } catch (e) {
                         return { base, ok: false, error: e.message };
@@ -536,7 +550,7 @@
                 });
 
                 if (rendered === 0) {
-                    showErrorWithDetails('所有源直连失败（CORS 限制）。', errorLog);
+                    showErrorWithDetails('所有源加载失败。', errorLog);
                     loadFallback();
                 } else {
                     errorDetailsDiv.innerHTML = '';
@@ -559,6 +573,7 @@
         }
 
         retryBtn.addEventListener('click', loadTools);
+        useProxyCheckbox.addEventListener('change', loadTools);
         loadTools();
 
         const toolboxBtn = document.getElementById('toolboxDownloadBtn');
