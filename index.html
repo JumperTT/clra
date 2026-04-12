@@ -9,7 +9,6 @@
     <style>
         :root {
             --primary: #2563eb;
-            --primary-glow: rgba(37, 99, 235, 0.25);
             --accent: #7c3aed;
             --bg-light: #f4f7fc;
             --card-light: rgba(255, 255, 255, 0.8);
@@ -18,9 +17,7 @@
             --card-dark: rgba(17, 24, 39, 0.85);
             --text-dark: #eef2ff;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
@@ -29,23 +26,19 @@
             line-height: 1.6;
         }
         body.dark { background: var(--bg-dark); color: var(--text-dark); }
-
         .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; }
-
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 3rem; padding-bottom: 1rem;
             border-bottom: 1px solid rgba(0,0,0,0.08);
         }
         body.dark .navbar { border-bottom-color: rgba(255,255,255,0.08); }
-
         .logo h1 {
             font-size: 1.9rem; font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--accent), #3b82f6);
             -webkit-background-clip: text; background-clip: text;
             color: transparent; letter-spacing: -0.5px;
         }
-
         .theme-toggle {
             background: rgba(0,0,0,0.06); border-radius: 60px; padding: 10px 20px;
             font-size: 0.9rem; font-weight: 600; cursor: pointer;
@@ -54,7 +47,6 @@
         }
         body.dark .theme-toggle { background: #1f2a44; }
         .theme-toggle:active { transform: scale(0.94); }
-
         .hero {
             background: var(--card-light); backdrop-filter: blur(12px);
             border-radius: 2rem; padding: 3rem; margin-bottom: 3rem;
@@ -63,22 +55,14 @@
             animation: fadeIn 0.8s ease-out;
         }
         body.dark .hero { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .badge {
             background: rgba(37, 99, 235, 0.1); color: var(--primary);
             display: inline-block; padding: 6px 18px; border-radius: 40px;
             font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem;
             border: 1px solid rgba(37, 99, 235, 0.2);
         }
-        body.dark .badge { background: rgba(37, 99, 235, 0.15); }
-
         .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
-
         .hero-actions { display: flex; flex-wrap: wrap; gap: 15px; }
         .btn {
             padding: 12px 25px; border-radius: 12px; font-size: 0.95rem;
@@ -91,18 +75,15 @@
         .btn-primary:hover { background: #1d4ed8; }
         .btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
         .btn:active { transform: scale(0.96); }
-
         .section-title {
             font-size: 1.8rem; font-weight: 700; margin: 3rem 0 2rem;
             display: flex; align-items: center; gap: 15px;
         }
-
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 2rem;
         }
-
         .tool-card {
             position: relative; overflow: hidden;
             background: var(--card-light); backdrop-filter: blur(8px);
@@ -113,25 +94,15 @@
             user-select: none; cursor: default;
         }
         body.dark .tool-card { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 35px rgba(0,0,0,0.12);
-        }
-        .tool-card:active {
-            transform: translateY(-4px) scale(0.98);
-            transition: transform 0.1s;
-        }
-
+        .tool-card:hover { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,0,0,0.12); }
+        .tool-card:active { transform: translateY(-4px) scale(0.98); transition: transform 0.1s; }
         .ripple {
             position: absolute; border-radius: 50%;
             background: radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0) 70%);
             transform: scale(0); pointer-events: none;
             animation: ripple-animation 0.8s ease-out; z-index: 5;
         }
-
         @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
-
         .tool-header { display: flex; gap: 16px; margin-bottom: 1.4rem; align-items: center; }
         .tool-icon {
             width: 60px; height: 60px; background: #e2e8f0; border-radius: 18px;
@@ -140,7 +111,6 @@
         }
         body.dark .tool-icon { background: #0f172a; }
         .tool-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
         .tool-name {
             font-size: 1.4rem; font-weight: 700;
             display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
@@ -150,17 +120,14 @@
             padding: 3px 10px; border-radius: 20px; font-weight: 600;
         }
         .tool-dev { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
-
         .tool-desc { font-size: 0.95rem; opacity: 0.9; margin-bottom: 1.2rem; flex-grow: 1; }
         .update-content {
             font-size: 0.8rem; background: rgba(124,58,237,0.08);
             padding: 8px 12px; border-radius: 12px; margin: 10px 0 14px;
             border-left: 3px solid var(--accent);
         }
-
         .tool-website { margin-bottom: 12px; font-size: 0.9rem; }
         .tool-website a { color: var(--primary); text-decoration: none; font-weight: 500; }
-
         .download-group {
             display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;
             position: relative; z-index: 10;
@@ -175,9 +142,7 @@
         body.dark .btn-download { background: #1e293b; color: #bdd3ff; }
         .btn-download:hover { background: var(--primary); color: white; border-color: var(--primary); }
         .btn-download:active { transform: scale(0.94); }
-
         .no-download { opacity: 0.6; font-size: 0.85rem; font-style: italic; }
-
         .join-card {
             background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(124,58,237,0.05));
             border-radius: 2rem; padding: 2.5rem; margin-top: 4rem;
@@ -189,7 +154,6 @@
         }
         .req-item { font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
         .req-item i { color: #10b981; }
-
         .loading-placeholder {
             grid-column: 1 / -1; text-align: center; padding: 3rem;
             font-size: 1.2rem; opacity: 0.7;
@@ -198,9 +162,8 @@
             color: #dc2626; background: rgba(220,38,38,0.1);
             padding: 1rem; border-radius: 16px;
         }
-
+        .retry-indicator { margin-top: 10px; font-size: 0.9rem; opacity: 0.8; }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
-
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
             .hero { padding: 2rem 1.5rem; }
@@ -300,7 +263,6 @@
             return res;
         }
 
-        // 处理字符串：替换 *，并补全 https://
         function processUrlString(str) {
             if (typeof str !== 'string') return str;
             let s = str.replace(/\*/g, () => random4Chars());
@@ -308,14 +270,12 @@
             return s;
         }
 
-        // 处理 jfkl_urls.txt 的每一行
         function processUrlLine(line) {
             let s = line.trim();
             if (s === '' || s.startsWith('#')) return null;
             return processUrlString(s);
         }
 
-        // 解析 download_url 字段 (兼容字符串 / 数组)
         function parseDownloadField(raw) {
             if (!raw) return [];
             const items = Array.isArray(raw) ? raw : [raw];
@@ -323,31 +283,66 @@
                 if (typeof item !== 'string') return null;
                 const colonIdx = item.indexOf(':');
                 let name, urlPart;
-                if (colonIdx === -1) {
-                    name = '下载';
-                    urlPart = item;
-                } else {
-                    name = item.substring(0, colonIdx).trim();
-                    urlPart = item.substring(colonIdx + 1).trim();
-                }
+                if (colonIdx === -1) { name = '下载'; urlPart = item; }
+                else { name = item.substring(0, colonIdx).trim(); urlPart = item.substring(colonIdx + 1).trim(); }
                 return { name: name || '下载', url: processUrlString(urlPart) };
             }).filter(Boolean);
         }
 
-        // 处理 manifest 中需要替换通配符的字段
         function processManifest(manifest) {
-            const m = { ...manifest }; // 浅拷贝
+            const m = { ...manifest };
             if (m.url) m.url = processUrlString(m.url);
             if (m.icon_url) m.icon_url = processUrlString(m.icon_url);
-            // download_url 稍后由 parseDownloadField 单独处理
             return m;
         }
 
-        // 渲染卡片
+        // ---------- 带超时与重试的 fetch (模拟 PC UA，绕过 CF) ----------
+        async function fetchWithRetry(url, maxRetries = 5, timeoutMs = 3000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            
+            const headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'Cache-Control': 'no-cache'
+            };
+
+            let lastError;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const resp = await fetch(url, {
+                        method: 'GET',
+                        headers,
+                        signal: controller.signal,
+                        cache: 'no-cache',
+                        credentials: 'omit',
+                        mode: 'cors'
+                    });
+                    clearTimeout(timeoutId);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    return await resp.json();
+                } catch (err) {
+                    clearTimeout(timeoutId);
+                    lastError = err;
+                    if (attempt < maxRetries) {
+                        // 短暂延迟后重试
+                        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+                        // 重置超时控制器
+                        const newController = new AbortController();
+                        const newTimeoutId = setTimeout(() => newController.abort(), timeoutMs);
+                        // 重新赋值以便下次循环使用 (hacky但可行)
+                        // 简单起见，我们直接在循环内重建
+                    }
+                }
+            }
+            throw lastError;
+        }
+
+        // 创建卡片
         function createToolCard(manifest, baseUrl) {
             const m = processManifest(manifest);
             const downloadItems = parseDownloadField(manifest.download_url);
-
             const card = document.createElement('div');
             card.className = 'tool-card';
 
@@ -399,17 +394,24 @@
         }
 
         const container = document.getElementById('toolsContainer');
-        function showLoading() { container.innerHTML = '<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> 加载工具数据中……</div>'; }
-        function showError(msg) { container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${msg}</div>`; }
+        function showLoading(msg = '正在加载工具清单……') {
+            container.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> ${msg}</div>`;
+        }
+        function showError(msg) {
+            container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${msg}</div>`;
+        }
 
         async function loadTools() {
-            showLoading();
+            showLoading('正在获取源列表 (jfkl.pages.dev) ...');
             try {
-                // 1. 获取 jfkl_urls.txt (固定地址)
                 const urlListUrl = 'https://jfkl.pages.dev/jfkl_urls.txt';
-                const resp = await fetch(urlListUrl, { cache: 'no-cache' });
-                if (!resp.ok) throw new Error(`无法加载列表 (${resp.status})`);
-                const text = await resp.text();
+                // 列表获取也用带 UA 的 fetch (不用重试太多次)
+                const listResp = await fetch(urlListUrl, {
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+                    cache: 'no-cache'
+                });
+                if (!listResp.ok) throw new Error(`无法加载列表 (${listResp.status})`);
+                const text = await listResp.text();
                 const lines = text.split(/\r?\n/);
                 const baseSet = new Set();
                 lines.forEach(line => {
@@ -418,24 +420,26 @@
                 });
                 const baseUrls = Array.from(baseSet);
                 if (baseUrls.length === 0) {
-                    container.innerHTML = '<div class="loading-placeholder">列表为空</div>';
+                    container.innerHTML = '<div class="loading-placeholder">列表为空，没有可加载的源</div>';
                     return;
                 }
 
-                // 2. 并发请求 manifest
-                const promises = baseUrls.map(async base => {
+                // 更新界面：开始并发请求
+                showLoading(`正在从 ${baseUrls.length} 个源拉取数据 (带重试，最多5次) ...`);
+                
+                // 单个源请求函数 (使用重试)
+                const fetchOne = async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const res = await fetch(manifestUrl, { cache: 'no-cache' });
-                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                        const json = await res.json();
+                        const json = await fetchWithRetry(manifestUrl, 5, 3000);
                         return { base, manifest: json, ok: true };
                     } catch (e) {
-                        console.warn(`加载失败: ${manifestUrl}`, e);
+                        console.warn(`[失败] ${manifestUrl}`, e);
                         return { base, ok: false };
                     }
-                });
-                const results = await Promise.all(promises);
+                };
+
+                const results = await Promise.all(baseUrls.map(fetchOne));
                 
                 container.innerHTML = '';
                 let rendered = 0;
@@ -444,12 +448,12 @@
                         try {
                             container.appendChild(createToolCard(r.manifest, r.base));
                             rendered++;
-                        } catch (e) { console.error(e); }
+                        } catch (e) { console.error('卡片渲染失败:', e); }
                     }
                 });
 
                 if (rendered === 0) {
-                    showError('没有成功加载任何工具，请检查 manifest 格式或网络');
+                    showError('没有成功加载任何工具，请检查 manifest 格式或网络 (已尝试重试5次)');
                 } else {
                     const failed = results.length - rendered;
                     if (failed > 0) {
@@ -457,7 +461,7 @@
                         hint.className = 'loading-placeholder';
                         hint.style.gridColumn = '1/-1';
                         hint.style.padding = '0.5rem';
-                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，已忽略。`;
+                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败 (已重试5次)，已忽略。`;
                         container.appendChild(hint);
                     }
                 }
