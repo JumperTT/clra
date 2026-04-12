@@ -211,7 +211,7 @@
         </div>
         <div class="tools-grid" id="toolsContainer">
             <div class="loading-placeholder">
-                <i class="fas fa-spinner fa-pulse"></i> 正在加载工具清单……
+                <i class="fas fa-spinner fa-pulse"></i> 正在初始化……
             </div>
         </div>
     </section>
@@ -296,47 +296,74 @@
             return m;
         }
 
-        // ---------- 带超时与重试的 fetch (模拟 PC UA，绕过 CF) ----------
-        async function fetchWithRetry(url, maxRetries = 5, timeoutMs = 3000) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-            
-            const headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'application/json, text/plain, */*',
-                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                'Cache-Control': 'no-cache'
-            };
+        // ---------- 带超时与重试的 fetch，支持 CORS 代理降级 ----------
+        const PROXY_LIST = [
+            'https://api.allorigins.win/raw?url=',      // 稳定，返回原始内容
+            'https://corsproxy.io/?',                   // 备选
+            'https://cors-anywhere.herokuapp.com/'      // 可能需要申请临时权限，作为最后尝试
+        ];
 
-            let lastError;
-            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+        // 通用请求函数：支持直接请求 + 代理降级
+        async function requestWithFallback(url, maxRetries = 2, timeoutMs = 5000) {
+            const attemptRequest = async (fetchUrl, useProxy = false) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
                 try {
-                    const resp = await fetch(url, {
+                    const resp = await fetch(fetchUrl, {
                         method: 'GET',
-                        headers,
+                        headers: {
+                            'User-Agent': PC_UA,
+                            'Accept': 'application/json',
+                        },
                         signal: controller.signal,
                         cache: 'no-cache',
-                        credentials: 'omit',
-                        mode: 'cors'
+                        mode: 'cors',
+                        credentials: 'omit'
                     });
                     clearTimeout(timeoutId);
                     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                    return await resp.json();
-                } catch (err) {
+                    const text = await resp.text();
+                    try {
+                        return JSON.parse(text);
+                    } catch {
+                        throw new Error('响应不是有效的 JSON');
+                    }
+                } catch (e) {
                     clearTimeout(timeoutId);
-                    lastError = err;
-                    if (attempt < maxRetries) {
-                        // 短暂延迟后重试
-                        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
-                        // 重置超时控制器
-                        const newController = new AbortController();
-                        const newTimeoutId = setTimeout(() => newController.abort(), timeoutMs);
-                        // 重新赋值以便下次循环使用 (hacky但可行)
-                        // 简单起见，我们直接在循环内重建
+                    throw e;
+                }
+            };
+
+            // 1. 先尝试直接请求
+            for (let retry = 0; retry <= maxRetries; retry++) {
+                try {
+                    return await attemptRequest(url);
+                } catch (e) {
+                    if (retry === maxRetries) {
+                        console.warn(`直接请求失败 (${url}):`, e.message);
+                    } else {
+                        await new Promise(r => setTimeout(r, 800 * (retry + 1)));
                     }
                 }
             }
-            throw lastError;
+
+            // 2. 直接请求全部失败，尝试代理
+            for (const proxy of PROXY_LIST) {
+                const proxyUrl = proxy + encodeURIComponent(url);
+                for (let retry = 0; retry <= 1; retry++) {
+                    try {
+                        console.log(`尝试通过代理: ${proxy}`);
+                        return await attemptRequest(proxyUrl);
+                    } catch (e) {
+                        if (retry === 1) console.warn(`代理 ${proxy} 失败:`, e.message);
+                        else await new Promise(r => setTimeout(r, 500));
+                    }
+                }
+            }
+
+            throw new Error(`所有请求方式均失败 (直连+${PROXY_LIST.length}个代理)`);
         }
 
         // 创建卡片
@@ -394,7 +421,7 @@
         }
 
         const container = document.getElementById('toolsContainer');
-        function showLoading(msg = '正在加载工具清单……') {
+        function showLoading(msg) {
             container.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> ${msg}</div>`;
         }
         function showError(msg) {
@@ -405,9 +432,8 @@
             showLoading('正在获取源列表 (jfkl.pages.dev) ...');
             try {
                 const urlListUrl = 'https://jfkl.pages.dev/jfkl_urls.txt';
-                // 列表获取也用带 UA 的 fetch (不用重试太多次)
                 const listResp = await fetch(urlListUrl, {
-                    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+                    headers: { 'User-Agent': PC_UA },
                     cache: 'no-cache'
                 });
                 if (!listResp.ok) throw new Error(`无法加载列表 (${listResp.status})`);
@@ -424,14 +450,12 @@
                     return;
                 }
 
-                // 更新界面：开始并发请求
-                showLoading(`正在从 ${baseUrls.length} 个源拉取数据 (带重试，最多5次) ...`);
-                
-                // 单个源请求函数 (使用重试)
+                showLoading(`正在从 ${baseUrls.length} 个源拉取数据 (支持CORS代理降级)...`);
+
                 const fetchOne = async (base) => {
                     const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
                     try {
-                        const json = await fetchWithRetry(manifestUrl, 5, 3000);
+                        const json = await requestWithFallback(manifestUrl, 2, 4000);
                         return { base, manifest: json, ok: true };
                     } catch (e) {
                         console.warn(`[失败] ${manifestUrl}`, e);
@@ -453,7 +477,7 @@
                 });
 
                 if (rendered === 0) {
-                    showError('没有成功加载任何工具，请检查 manifest 格式或网络 (已尝试重试5次)');
+                    showError('所有源加载失败。可能原因：CORS限制、网络问题、或 manifest 格式错误。已尝试直连及多个代理。');
                 } else {
                     const failed = results.length - rendered;
                     if (failed > 0) {
@@ -461,7 +485,7 @@
                         hint.className = 'loading-placeholder';
                         hint.style.gridColumn = '1/-1';
                         hint.style.padding = '0.5rem';
-                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败 (已重试5次)，已忽略。`;
+                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，已忽略。`;
                         container.appendChild(hint);
                     }
                 }
