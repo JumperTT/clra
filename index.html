@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>机房抗联</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <title>机房抗联 · 破壁者联盟</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb;
             --accent: #7c3aed;
             --bg-light: #f4f7fc;
-            --card-light: rgba(255, 255, 255, 0.8);
+            --card-light: rgba(255,255,255,0.8);
             --text-light: #0a1929;
             --bg-dark: #030712;
-            --card-dark: rgba(17, 24, 39, 0.85);
+            --card-dark: rgba(17,24,39,0.85);
             --text-dark: #eef2ff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,7 +35,7 @@
         body.dark .navbar { border-bottom-color: rgba(255,255,255,0.08); }
         .logo h1 {
             font-size: 1.9rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--accent), #3b82f6);
+            background: linear-gradient(135deg, var(--primary), var(--accent), #3b8fbf);
             -webkit-background-clip: text; background-clip: text;
             color: transparent; letter-spacing: -0.5px;
         }
@@ -57,18 +57,18 @@
         body.dark .hero { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .badge {
-            background: rgba(37, 99, 235, 0.1); color: var(--primary);
+            background: rgba(37,99,235,0.1); color: var(--primary);
             display: inline-block; padding: 6px 18px; border-radius: 40px;
             font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            border: 1px solid rgba(37,99,235,0.2);
         }
         .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
         .hero-actions { display: flex; flex-wrap: wrap; gap: 15px; }
         .btn {
             padding: 12px 25px; border-radius: 12px; font-size: 0.95rem;
             text-decoration: none; font-weight: 600;
-            background: rgba(37, 99, 235, 0.1); color: var(--primary);
-            transition: 0.2s; border: 1px solid rgba(37, 99, 235, 0.25);
+            background: rgba(37,99,235,0.1); color: var(--primary);
+            transition: 0.2s; border: 1px solid rgba(37,99,235,0.25);
             display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
         }
         .btn-primary { background: var(--primary); color: white; border: none; }
@@ -166,6 +166,11 @@
             display: flex; justify-content: flex-end; margin-bottom: 10px;
         }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
+        .debug-info {
+            background: rgba(0,0,0,0.05); border-radius: 12px; padding: 12px;
+            margin: 15px 0; font-size: 0.85rem; word-break: break-all;
+        }
+        body.dark .debug-info { background: rgba(255,255,255,0.05); }
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
             .hero { padding: 2rem 1.5rem; }
@@ -177,7 +182,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <nav class="navbar">
         <div class="logo">
@@ -252,6 +256,22 @@
     (function(){
         "use strict";
 
+        // 随机4位小写字母 (代理子域名)
+        function random4Letters() {
+            const c = 'abcdefghijklmnopqrstuvwxyz';
+            let r = '';
+            for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)];
+            return r;
+        }
+
+        // 随机4位字符（大小写字母+数字），用于 * 替换
+        function random4Chars() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let res = '';
+            for (let i=0; i<4; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            return res;
+        }
+
         // 主题
         const themeBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
@@ -267,25 +287,18 @@
         if (saved === 'dark') setTheme(true);
         else if (saved === 'light') setTheme(false);
 
-        // 工具函数
-        function random4Chars() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let res = '';
-            for (let i=0; i<4; i++) res += chars[Math.floor(Math.random() * chars.length)];
-            return res;
-        }
-
-        function processUrlString(str) {
-            if (typeof str !== 'string') return str;
-            let s = str.replace(/\*/g, () => random4Chars());
-            if (!/^https?:\/\//i.test(s)) s = 'https://' + s;
-            return s;
+        function fixUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            url = url.trim();
+            if (!url.startsWith('http')) return 'https://' + url;
+            return url;
         }
 
         function processUrlLine(line) {
             let s = line.trim();
             if (s === '' || s.startsWith('#')) return null;
-            return processUrlString(s);
+            s = s.replace(/\*/g, () => random4Chars());
+            return s;
         }
 
         function parseDownloadField(raw) {
@@ -297,75 +310,91 @@
                 let name, urlPart;
                 if (colonIdx === -1) { name = '下载'; urlPart = item; }
                 else { name = item.substring(0, colonIdx).trim(); urlPart = item.substring(colonIdx + 1).trim(); }
-                return { name: name || '下载', url: processUrlString(urlPart) };
+                return { name: name || '下载', url: fixUrl(urlPart) };
             }).filter(Boolean);
         }
 
         function processManifest(manifest) {
             const m = { ...manifest };
-            if (m.url) m.url = processUrlString(m.url);
-            if (m.icon_url) m.icon_url = processUrlString(m.icon_url);
+            if (m.url) m.url = fixUrl(m.url);
+            if (m.icon_url) m.icon_url = fixUrl(m.icon_url);
             return m;
         }
 
-        // 源列表
         const URL_SOURCES = [
             { name: '本地', url: './jfkl_urls.txt' },
             { name: '远程', url: 'https://jfkl.pages.dev/jfkl_urls.txt' }
         ];
 
-        // 自建代理基础地址（含通配符）
-        const PROXY_BASE = '*.jfglss.icu/proxy.php';
-
+        const sub = random4Letters();
+        const PROXY_BASE = `https://${sub}.jfglss.icu/proxy.php`;
         const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
         const useProxyCheckbox = document.getElementById('useProxyCheckbox');
 
-        // 带超时与编码解码的 fetch
-        async function fetchManifest(url) {
-            let finalUrl = url;
-            if (useProxyCheckbox.checked) {
-                // 代理地址中的 * 也需要随机替换
-                const proxyBaseProcessed = processUrlString(PROXY_BASE);
-                finalUrl = proxyBaseProcessed + '?url=' + encodeURIComponent(url);
-            }
+        // JSONP 请求函数 (绕过 CORS 和证书限制)
+        let jsonpCounter = 0;
+        function jsonpRequest(url, callbackName) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const timeout = setTimeout(() => {
+                    reject(new Error('JSONP 请求超时(15秒)'));
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                }, 15000);
 
+                window[callbackName] = (data) => {
+                    clearTimeout(timeout);
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    resolve(data);
+                };
+
+                script.src = url;
+                script.onerror = () => {
+                    clearTimeout(timeout);
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('JSONP 网络错误，请检查代理服务器或网络连接'));
+                };
+                document.body.appendChild(script);
+            });
+        }
+
+        // 直连模式：智能解码 (UTF-8/GBK)
+        async function fetchDirect(url) {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
             try {
-                const resp = await fetch(finalUrl, {
-                    method: 'GET',
-                    headers: {
-                        'User-Agent': PC_UA,
-                        'Accept': 'application/json, text/plain, */*',
-                    },
+                const resp = await fetch(url, {
+                    headers: { 'User-Agent': PC_UA },
                     signal: controller.signal,
                     cache: 'no-cache',
-                    mode: 'cors',
-                    credentials: 'omit'
+                    mode: 'cors'
                 });
                 clearTimeout(timeoutId);
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
                 const buffer = await resp.arrayBuffer();
-                const uint8Array = new Uint8Array(buffer);
+                const uint8 = new Uint8Array(buffer);
                 let text;
                 try {
-                    text = new TextDecoder('utf-8', { fatal: true }).decode(uint8Array);
+                    text = new TextDecoder('utf-8', { fatal: true }).decode(uint8);
+                    return JSON.parse(text);
                 } catch {
-                    try {
-                        text = new TextDecoder('gbk').decode(uint8Array);
-                    } catch {
-                        text = new TextDecoder('iso-8859-1').decode(uint8Array);
-                    }
+                    text = new TextDecoder('gbk').decode(uint8);
+                    return JSON.parse(text);
                 }
-                return JSON.parse(text);
             } catch (e) {
                 clearTimeout(timeoutId);
-                if (e.name === 'AbortError') throw new Error('请求超时');
-                if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-                    throw new Error(useProxyCheckbox.checked ? '代理请求失败' : 'CORS/网络错误');
-                }
+                if (e.name === 'AbortError') throw new Error('直连请求超时(12秒)');
                 throw e;
             }
+        }
+
+        // 代理模式 (JSONP)
+        async function fetchViaProxy(targetUrl) {
+            const callback = 'jfkl_cb_' + (++jsonpCounter);
+            const proxyUrl = PROXY_BASE + '?url=' + encodeURIComponent(targetUrl) + '&callback=' + callback;
+            return jsonpRequest(proxyUrl, callback);
         }
 
         // 创建卡片
@@ -382,9 +411,9 @@
             const name = m.name || '未命名';
             const dev = m.developer || '匿名';
             const ver = m.version || 'v0.0.0';
-            const desc = m.description || '暂无描述';
-            const update = m.update_content || '';
-            const website = m.url || baseUrl || '#';
+            const desc = (m.description || '暂无描述').replace(/\n/g, ' ');
+            const update = (m.update_content || '').replace(/\n/g, ' ');
+            const website = m.url || fixUrl(baseUrl);
 
             const downloadHtml = downloadItems.length 
                 ? downloadItems.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="btn-download"><i class="fas fa-download"></i> ${d.name}</a>`).join('')
@@ -408,11 +437,13 @@
 
             card.addEventListener('click', function(e) {
                 const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left, y = e.clientY - rect.top;
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
                 const size = Math.max(rect.width, rect.height) * 2;
                 const ripple = document.createElement('span');
                 ripple.className = 'ripple';
-                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
                 ripple.style.left = (x - size/2) + 'px';
                 ripple.style.top = (y - size/2) + 'px';
                 card.appendChild(ripple);
@@ -424,26 +455,8 @@
 
         // 备用数据
         const FALLBACK_MANIFESTS = [
-            {
-                name: 'SCLTK (备用示例)',
-                developer: 'MaxLHy0424',
-                version: 'v7.1.4',
-                description: '现代 C++ 编写，支持极域、联想云教室等主流环境的深度破解。',
-                update_content: '备用数据：网络加载失败，此为内置示例。',
-                url: 'https://github.com/MaxLHy0424/SCLTK',
-                download_url: ['i686-msvcrt:https://example.com/i686', 'x86_64-ucrt:https://example.com/x64'],
-                icon_url: ''
-            },
-            {
-                name: '机房管理杀手 (备用示例)',
-                developer: 'zmas cloud',
-                version: 'v0.0.16',
-                description: '针对机房管理助手及极域电子教室的快速清理程序。',
-                update_content: '备用数据：网络加载失败，此为内置示例。',
-                url: 'https://jfglss.icu/',
-                download_url: '主程序:https://jfglss.icu/dl',
-                icon_url: ''
-            }
+            { name: 'SCLTK (备用)', developer: 'MaxLHy0424', version: 'v7.1.4', description: '备用示例', url: '#' },
+            { name: '机房管理杀手 (备用)', developer: 'zmas cloud', version: 'v0.0.16', description: '备用示例', url: '#' }
         ];
 
         const container = document.getElementById('toolsContainer');
@@ -459,17 +472,14 @@
         function showError(msg, details) {
             container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${msg}</div>`;
             if (details) {
-                errorDetailsDiv.innerHTML = `<div style="background:rgba(0,0,0,0.05); padding:10px; border-radius:12px; margin-top:10px; font-size:0.9rem;"><strong>调试信息：</strong><br>${details}</div>`;
+                errorDetailsDiv.innerHTML = `<div class="debug-info"><strong>调试信息：</strong><br>${details}</div>`;
             }
             retryBtn.style.display = 'inline-block';
         }
 
         function loadFallback() {
             container.innerHTML = '';
-            FALLBACK_MANIFESTS.forEach(m => {
-                const card = createToolCard(m, m.url);
-                container.appendChild(card);
-            });
+            FALLBACK_MANIFESTS.forEach(m => container.appendChild(createToolCard(m, '#')));
             const hint = document.createElement('div');
             hint.className = 'loading-placeholder';
             hint.style.gridColumn = '1/-1';
@@ -494,21 +504,16 @@
                         });
                         return { success: true, urls, source: src.name };
                     } catch (e) {
-                        console.warn(`获取列表失败 [${src.name}]:`, e);
+                        console.warn(`列表获取失败 [${src.name}]:`, e);
                         return { success: false, urls: [], source: src.name, error: e.message };
                     }
                 });
                 const sourceResults = await Promise.all(sourcePromises);
                 const allBaseUrls = new Set();
-                const successSources = [];
                 const failDetails = [];
                 sourceResults.forEach(r => {
-                    if (r.success) {
-                        r.urls.forEach(u => allBaseUrls.add(u));
-                        successSources.push(r.source);
-                    } else {
-                        failDetails.push(`${r.source}: ${r.error}`);
-                    }
+                    if (r.success) r.urls.forEach(u => allBaseUrls.add(u));
+                    else failDetails.push(`${r.source}: ${r.error}`);
                 });
                 const baseUrls = Array.from(allBaseUrls);
                 if (baseUrls.length === 0) {
@@ -517,17 +522,19 @@
                     return;
                 }
 
-                const mode = useProxyCheckbox.checked ? '代理模式' : '直连模式';
+                const mode = useProxyCheckbox.checked ? '代理模式(JSONP)' : '直连模式';
                 showLoading(`正在从 ${baseUrls.length} 个源获取数据 (${mode})...`);
 
                 const manifestPromises = baseUrls.map(async (base) => {
-                    const manifestUrl = base.endsWith('/') ? base + 'jfkl_manifest.json' : base + '/jfkl_manifest.json';
+                    const targetUrl = 'https://' + base.replace(/\/$/, '') + '/jfkl_manifest.json';
+                    const isProxy = useProxyCheckbox.checked;
                     try {
-                        const json = await fetchManifest(manifestUrl);
-                        return { base, manifest: json, ok: true };
+                        const json = isProxy 
+                            ? await fetchViaProxy(targetUrl)
+                            : await fetchDirect(targetUrl);
+                        return { base, ok: true, manifest: json, targetUrl };
                     } catch (e) {
-                        console.warn(`加载失败 ${manifestUrl}:`, e);
-                        return { base, ok: false, error: e.message };
+                        return { base, ok: false, targetUrl, error: e.message };
                     }
                 });
 
@@ -542,14 +549,16 @@
                             rendered++;
                         } catch (e) { console.error(e); }
                     } else {
-                        errorLog.push(`❌ ${r.base}: ${r.error || '未知错误'}`);
+                        let line = `❌ 原始目标: ${r.targetUrl}<br>`;
+                        line += `　失败原因: ${r.error}`;
+                        errorLog.push(line);
                     }
                 });
 
                 if (rendered === 0) {
-                    let details = errorLog.join('<br>');
+                    let details = errorLog.join('<br><br>');
                     if (failDetails.length) details += '<br><br>列表源错误:<br>' + failDetails.join('<br>');
-                    showError('没有成功加载任何工具。', details);
+                    showError('所有工具加载失败。', details);
                     loadFallback();
                 } else {
                     retryBtn.style.display = 'none';
@@ -558,13 +567,13 @@
                         const hint = document.createElement('div');
                         hint.className = 'loading-placeholder';
                         hint.style.gridColumn = '1/-1';
-                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，已忽略。`;
+                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，详情见下。<br><small>${errorLog.join('<br>')}</small>`;
                         container.appendChild(hint);
                     }
                 }
             } catch (e) {
                 console.error(e);
-                showError(`初始化失败: ${e.message}`);
+                showError(`初始化异常: ${e.message}`);
                 loadFallback();
             }
         }
@@ -573,13 +582,10 @@
         useProxyCheckbox.addEventListener('change', loadTools);
         loadTools();
 
-        const toolboxBtn = document.getElementById('toolboxDownloadBtn');
-        if (toolboxBtn) {
-            toolboxBtn.addEventListener('click', () => {
-                toolboxBtn.style.transform = 'scale(0.98)';
-                setTimeout(() => toolboxBtn.style.transform = '', 120);
-            });
-        }
+        document.getElementById('toolboxDownloadBtn')?.addEventListener('click', function(){
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => this.style.transform = '', 120);
+        });
 
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
