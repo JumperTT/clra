@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>机房抗联</title>
+    <title>机房抗联 · 破壁者联盟</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -158,19 +158,7 @@
             grid-column: 1 / -1; text-align: center; padding: 3rem;
             font-size: 1.2rem; opacity: 0.7;
         }
-        .error-message {
-            color: #dc2626; background: rgba(220,38,38,0.1);
-            padding: 1rem; border-radius: 16px;
-        }
-        .proxy-toggle {
-            display: flex; justify-content: flex-end; margin-bottom: 10px;
-        }
         .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
-        .debug-info {
-            background: rgba(0,0,0,0.05); border-radius: 12px; padding: 12px;
-            margin: 15px 0; font-size: 0.85rem; word-break: break-all;
-        }
-        body.dark .debug-info { background: rgba(255,255,255,0.05); }
         @media (max-width: 768px) {
             .container { padding: 1rem 1.2rem; }
             .hero { padding: 2rem 1.5rem; }
@@ -213,22 +201,12 @@
     <section id="tools-section">
         <div class="section-title">
             <i class="fas fa-terminal"></i>
-            <span>⚡ 抗联利刃库</span>
-        </div>
-        <div class="proxy-toggle">
-            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                <input type="checkbox" id="useProxyCheckbox"> 
-                <i class="fas fa-shield-hal"></i> 使用自建代理 (proxy.php)
-            </label>
+            <span>⚡ 抗联利刃库 · 动态加载</span>
         </div>
         <div class="tools-grid" id="toolsContainer">
             <div class="loading-placeholder">
                 <i class="fas fa-spinner fa-pulse"></i> 正在读取源列表...
             </div>
-        </div>
-        <div id="errorDetails" style="grid-column:1/-1;"></div>
-        <div style="text-align:center; margin: 20px 0;">
-            <button class="btn" id="retryBtn" style="display:none;"><i class="fas fa-sync-alt"></i> 重新加载</button>
         </div>
     </section>
 
@@ -255,14 +233,6 @@
 <script>
     (function(){
         "use strict";
-
-        // 随机4位小写字母 (代理子域名)
-        function random4Letters() {
-            const c = 'abcdefghijklmnopqrstuvwxyz';
-            let r = '';
-            for (let i = 0; i < 4; i++) r += c[Math.floor(Math.random() * c.length)];
-            return r;
-        }
 
         // 随机4位字符（大小写字母+数字），用于 * 替换
         function random4Chars() {
@@ -321,22 +291,15 @@
             return m;
         }
 
-        const URL_SOURCES = [
-            { name: '本地', url: './jfkl_urls.txt' }
-        ];
-
-        const sub = random4Letters();
-        const PROXY_BASE = `https://${sub}.jfglss.icu/proxy.php`;
-        const PC_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-        const useProxyCheckbox = document.getElementById('useProxyCheckbox');
-
-        // JSONP 请求函数 (绕过 CORS 和证书限制)
+        const container = document.getElementById('toolsContainer');
+        
+        // JSONP 请求函数
         let jsonpCounter = 0;
         function jsonpRequest(url, callbackName) {
             return new Promise((resolve, reject) => {
                 const script = document.createElement('script');
                 const timeout = setTimeout(() => {
-                    reject(new Error('JSONP 请求超时(15秒)'));
+                    reject(new Error('JSONP 超时'));
                     document.body.removeChild(script);
                     delete window[callbackName];
                 }, 15000);
@@ -353,47 +316,27 @@
                     clearTimeout(timeout);
                     document.body.removeChild(script);
                     delete window[callbackName];
-                    reject(new Error('JSONP 网络错误，请检查代理服务器或网络连接'));
+                    reject(new Error('JSONP 网络错误'));
                 };
                 document.body.appendChild(script);
             });
         }
 
-        // 直连模式：智能解码 (UTF-8/GBK)
-        async function fetchDirect(url) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 12000);
+        // 从 proxy.json 加载代理列表，随机选一个
+        async function loadProxyBase() {
             try {
-                const resp = await fetch(url, {
-                    headers: { 'User-Agent': PC_UA },
-                    signal: controller.signal,
-                    cache: 'no-cache',
-                    mode: 'cors'
-                });
-                clearTimeout(timeoutId);
-                if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
-                const buffer = await resp.arrayBuffer();
-                const uint8 = new Uint8Array(buffer);
-                let text;
-                try {
-                    text = new TextDecoder('utf-8', { fatal: true }).decode(uint8);
-                    return JSON.parse(text);
-                } catch {
-                    text = new TextDecoder('gbk').decode(uint8);
-                    return JSON.parse(text);
-                }
+                const resp = await fetch('./proxy.json', { cache: 'no-cache' });
+                if (!resp.ok) throw new Error('proxy.json 加载失败');
+                const list = await resp.json();
+                if (!Array.isArray(list) || list.length === 0) throw new Error('代理列表为空');
+                // 随机选择一个代理基础地址
+                const base = list[Math.floor(Math.random() * list.length)];
+                // 确保末尾没有斜杠
+                return base.replace(/\/+$/, '');
             } catch (e) {
-                clearTimeout(timeoutId);
-                if (e.name === 'AbortError') throw new Error('直连请求超时(12秒)');
-                throw e;
+                console.warn('代理列表加载失败，将显示备用数据', e);
+                return null;
             }
-        }
-
-        // 代理模式 (JSONP)
-        async function fetchViaProxy(targetUrl) {
-            const callback = 'jfkl_cb_' + (++jsonpCounter);
-            const proxyUrl = PROXY_BASE + '?url=' + encodeURIComponent(targetUrl) + '&callback=' + callback;
-            return jsonpRequest(proxyUrl, callback);
         }
 
         // 创建卡片
@@ -403,6 +346,7 @@
             const card = document.createElement('div');
             card.className = 'tool-card';
 
+            // 图标：支持常见图片格式
             const iconHtml = m.icon_url 
                 ? `<img src="${m.icon_url}" alt="icon" onerror="this.parentElement.innerHTML='<i class=\'fas fa-cube\'></i>'">`
                 : '<i class="fas fa-cube"></i>';
@@ -458,22 +402,8 @@
             { name: '机房管理杀手 (备用)', developer: 'zmas cloud', version: 'v0.0.16', description: '备用示例', url: '#' }
         ];
 
-        const container = document.getElementById('toolsContainer');
-        const errorDetailsDiv = document.getElementById('errorDetails');
-        const retryBtn = document.getElementById('retryBtn');
-
         function showLoading(msg) {
             container.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> ${msg}</div>`;
-            errorDetailsDiv.innerHTML = '';
-            retryBtn.style.display = 'none';
-        }
-
-        function showError(msg, details) {
-            container.innerHTML = `<div class="loading-placeholder error-message"><i class="fas fa-exclamation-triangle"></i> ${msg}</div>`;
-            if (details) {
-                errorDetailsDiv.innerHTML = `<div class="debug-info"><strong>调试信息：</strong><br>${details}</div>`;
-            }
-            retryBtn.style.display = 'inline-block';
         }
 
         function loadFallback() {
@@ -484,101 +414,82 @@
             hint.style.gridColumn = '1/-1';
             hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。';
             container.appendChild(hint);
-            retryBtn.style.display = 'inline-block';
         }
 
         async function loadTools() {
-            showLoading('正在读取源列表 (本地 + 远程) ...');
+            showLoading('正在读取代理配置...');
+            
+            // 1. 获取代理基础地址
+            const proxyBase = await loadProxyBase();
+            if (!proxyBase) {
+                loadFallback();
+                return;
+            }
+
+            showLoading('正在读取本地 jfkl_urls.txt ...');
             try {
-                const sourcePromises = URL_SOURCES.map(async src => {
-                    try {
-                        const resp = await fetch(src.url, { cache: 'no-cache' });
-                        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-                        const text = await resp.text();
-                        const lines = text.split(/\r?\n/);
-                        const urls = [];
-                        lines.forEach(line => {
-                            const p = processUrlLine(line);
-                            if (p) urls.push(p);
-                        });
-                        return { success: true, urls, source: src.name };
-                    } catch (e) {
-                        console.warn(`列表获取失败 [${src.name}]:`, e);
-                        return { success: false, urls: [], source: src.name, error: e.message };
-                    }
+                // 2. 获取工具域名列表
+                const listResp = await fetch('./jfkl_urls.txt', { cache: 'no-cache' });
+                if (!listResp.ok) throw new Error('列表文件不存在');
+                const text = await listResp.text();
+                const lines = text.split(/\r?\n/);
+                const baseSet = new Set();
+                lines.forEach(line => {
+                    const p = processUrlLine(line);
+                    if (p) baseSet.add(p);
                 });
-                const sourceResults = await Promise.all(sourcePromises);
-                const allBaseUrls = new Set();
-                const failDetails = [];
-                sourceResults.forEach(r => {
-                    if (r.success) r.urls.forEach(u => allBaseUrls.add(u));
-                    else failDetails.push(`${r.source}: ${r.error}`);
-                });
-                const baseUrls = Array.from(allBaseUrls);
+                const baseUrls = Array.from(baseSet);
                 if (baseUrls.length === 0) {
-                    showError('没有获取到任何工具域名。', failDetails.join('<br>'));
                     loadFallback();
                     return;
                 }
 
-                const mode = useProxyCheckbox.checked ? '代理模式(JSONP)' : '直连模式';
-                showLoading(`正在从 ${baseUrls.length} 个源获取数据 (${mode})...`);
+                showLoading(`正在通过 JSONP 代理获取 ${baseUrls.length} 个工具...`);
 
+                // 3. 并发通过 JSONP 请求每个 manifest
                 const manifestPromises = baseUrls.map(async (base) => {
                     const targetUrl = 'https://' + base.replace(/\/$/, '') + '/jfkl_manifest.json';
-                    const isProxy = useProxyCheckbox.checked;
+                    const callback = 'jfkl_cb_' + (++jsonpCounter);
+                    const proxyUrl = proxyBase + '?url=' + encodeURIComponent(targetUrl) + '&callback=' + callback;
                     try {
-                        const json = isProxy 
-                            ? await fetchViaProxy(targetUrl)
-                            : await fetchDirect(targetUrl);
-                        return { base, ok: true, manifest: json, targetUrl };
+                        const json = await jsonpRequest(proxyUrl, callback);
+                        return { base, ok: true, manifest: json };
                     } catch (e) {
-                        return { base, ok: false, targetUrl, error: e.message };
+                        console.warn(`加载失败: ${targetUrl}`, e);
+                        return { base, ok: false };
                     }
                 });
 
                 const results = await Promise.all(manifestPromises);
                 container.innerHTML = '';
                 let rendered = 0;
-                const errorLog = [];
                 results.forEach(r => {
                     if (r.ok && r.manifest) {
                         try {
                             container.appendChild(createToolCard(r.manifest, r.base));
                             rendered++;
                         } catch (e) { console.error(e); }
-                    } else {
-                        let line = `❌ 原始目标: ${r.targetUrl}<br>`;
-                        line += `　失败原因: ${r.error}`;
-                        errorLog.push(line);
                     }
                 });
 
                 if (rendered === 0) {
-                    let details = errorLog.join('<br><br>');
-                    if (failDetails.length) details += '<br><br>列表源错误:<br>' + failDetails.join('<br>');
-                    showError('所有工具加载失败。', details);
                     loadFallback();
                 } else {
-                    retryBtn.style.display = 'none';
                     const failed = results.length - rendered;
                     if (failed > 0) {
                         const hint = document.createElement('div');
                         hint.className = 'loading-placeholder';
                         hint.style.gridColumn = '1/-1';
-                        hint.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${failed} 个源加载失败，详情见下。<br><small>${errorLog.join('<br>')}</small>`;
+                        hint.innerHTML = `<i class="fas fa-info-circle"></i> ${failed} 个工具加载失败，已显示成功项。`;
                         container.appendChild(hint);
                     }
                 }
             } catch (e) {
-                console.error(e);
-                showError(`初始化异常: ${e.message}`);
+                console.error('加载流程错误:', e);
                 loadFallback();
             }
         }
 
-        retryBtn.addEventListener('click', loadTools);
-        useProxyCheckbox.addEventListener('change', loadTools);
         loadTools();
 
         document.getElementById('toolboxDownloadBtn')?.addEventListener('click', function(){
