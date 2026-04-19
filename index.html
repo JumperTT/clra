@@ -3,236 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>机房抗联 · JFKangL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <title>机房抗联 · 破壁者联盟</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --primary: #2563eb;
-            --primary-glow: rgba(37, 99, 235, 0.3);
             --accent: #7c3aed;
             --bg-light: #f4f7fc;
-            --card-light: rgba(255, 255, 255, 0.8);
+            --card-light: rgba(255,255,255,0.8);
             --text-light: #0a1929;
             --bg-dark: #030712;
-            --card-dark: rgba(17, 24, 39, 0.8);
+            --card-dark: rgba(17,24,39,0.85);
             --text-dark: #eef2ff;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-light);
             color: var(--text-light);
-            transition: background 0.4s ease, color 0.2s ease;
-            scroll-behavior: smooth;
+            transition: background 0.4s, color 0.2s;
             line-height: 1.6;
         }
-
-        body.dark {
-            background: var(--bg-dark);
-            color: var(--text-dark);
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-        }
-
-        /* 导航栏 */
+        body.dark { background: var(--bg-dark); color: var(--text-dark); }
+        .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; }
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            padding-bottom: 1rem;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 3rem; padding-bottom: 1rem;
             border-bottom: 1px solid rgba(0,0,0,0.08);
         }
         body.dark .navbar { border-bottom-color: rgba(255,255,255,0.08); }
-
         .logo h1 {
-            font-size: 1.9rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--accent), #3b82f6);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
+            font-size: 1.9rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent), #3b8fbf);
+            -webkit-background-clip: text; background-clip: text;
+            color: transparent; letter-spacing: -0.5px;
         }
-
-        /* 主题切换按钮 */
         .theme-toggle {
-            background: rgba(0,0,0,0.06);
-            border-radius: 60px;
-            padding: 10px 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: none;
-            color: inherit;
+            background: rgba(0,0,0,0.06); border-radius: 60px; padding: 10px 20px;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; border: none;
+            color: inherit; transition: 0.2s;
         }
         body.dark .theme-toggle { background: #1f2a44; }
-
-        /* Hero 区域 */
+        .theme-toggle:active { transform: scale(0.94); }
         .hero {
-            background: var(--card-light);
-            backdrop-filter: blur(12px);
-            border-radius: 2rem;
-            padding: 3rem;
-            margin-bottom: 3rem;
+            background: var(--card-light); backdrop-filter: blur(12px);
+            border-radius: 2rem; padding: 3rem; margin-bottom: 3rem;
             border: 1px solid rgba(0,0,0,0.05);
             box-shadow: 0 10px 30px rgba(0,0,0,0.04);
             animation: fadeIn 0.8s ease-out;
         }
         body.dark .hero { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .badge {
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            background: rgba(37,99,235,0.1); color: var(--primary);
+            display: inline-block; padding: 6px 18px; border-radius: 40px;
+            font-size: 0.8rem; font-weight: 700; margin-bottom: 1.5rem;
+            border: 1px solid rgba(37,99,235,0.2);
         }
-
         .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
-
-        /* 核心工具项样式 */
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin: 3rem 0 2rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 15px; }
+        .btn {
+            padding: 12px 25px; border-radius: 12px; font-size: 0.95rem;
+            text-decoration: none; font-weight: 600;
+            background: rgba(37,99,235,0.1); color: var(--primary);
+            transition: 0.2s; border: 1px solid rgba(37,99,235,0.25);
+            display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
         }
-
+        .btn-primary { background: var(--primary); color: white; border: none; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn:active { transform: scale(0.96); }
+        .section-title {
+            font-size: 1.8rem; font-weight: 700; margin: 3rem 0 2rem;
+            display: flex; align-items: center; gap: 15px;
+        }
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             gap: 2rem;
         }
-
-        /* 工具卡片 - 水波纹容器 */
         .tool-card {
-            position: relative;
-            overflow: hidden; /* 必须，限制水波纹范围 */
-            background: var(--card-light);
-            backdrop-filter: blur(8px);
-            border-radius: 1.5rem;
-            padding: 1.8rem;
+            position: relative; overflow: hidden;
+            background: var(--card-light); backdrop-filter: blur(8px);
+            border-radius: 1.8rem; padding: 1.8rem;
             border: 1px solid rgba(0,0,0,0.05);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-            cursor: default;
-            display: flex;
-            flex-direction: column;
-            user-select: none;
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+            display: flex; flex-direction: column;
+            user-select: none; cursor: default;
         }
         body.dark .tool-card { background: var(--card-dark); border-color: rgba(255,255,255,0.05); }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-
-        /* 强化水波纹动画 */
+        .tool-card:hover { transform: translateY(-8px); box-shadow: 0 20px 35px rgba(0,0,0,0.12); }
+        .tool-card:active { transform: translateY(-4px) scale(0.98); transition: transform 0.1s; }
         .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0) 70%);
-            transform: scale(0);
-            pointer-events: none;
-            animation: ripple-animation 0.8s ease-out;
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.45) 0%, rgba(59,130,246,0) 70%);
+            transform: scale(0); pointer-events: none;
+            animation: ripple-animation 0.8s ease-out; z-index: 5;
         }
-
-        @keyframes ripple-animation {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        .tool-header { display: flex; gap: 15px; margin-bottom: 1.2rem; }
+        @keyframes ripple-animation { to { transform: scale(4); opacity: 0; } }
+        .tool-header { display: flex; gap: 16px; margin-bottom: 1.4rem; align-items: center; }
         .tool-icon {
-            width: 60px; height: 60px;
-            background: #e2e8f0;
-            border-radius: 18px;
+            width: 60px; height: 60px; background: #e2e8f0; border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: var(--primary);
+            font-size: 30px; color: var(--primary); flex-shrink: 0; overflow: hidden;
         }
         body.dark .tool-icon { background: #0f172a; }
-
-        .tool-name { font-size: 1.4rem; font-weight: 700; }
-        .tool-version { font-size: 0.75rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 6px; }
-        .tool-desc { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; flex-grow: 1; }
-        
-        /* 卡片内按钮 */
-        .card-actions { display: flex; gap: 10px; margin-top: auto; position: relative; z-index: 2; }
-        .btn-sm {
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            text-decoration: none;
-            font-weight: 600;
-            background: rgba(37, 99, 235, 0.1);
-            color: var(--primary);
-            transition: 0.2s;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+        .tool-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .tool-name {
+            font-size: 1.4rem; font-weight: 700;
+            display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px;
         }
-        .btn-sm:hover { background: var(--primary); color: white; }
-
-        /* 入伙区域 */
+        .tool-version {
+            font-size: 0.75rem; background: var(--primary); color: white;
+            padding: 3px 10px; border-radius: 20px; font-weight: 600;
+        }
+        .tool-dev { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
+        .tool-desc { font-size: 0.95rem; opacity: 0.9; margin-bottom: 1.2rem; flex-grow: 1; }
+        .update-content {
+            font-size: 0.8rem; background: rgba(124,58,237,0.08);
+            padding: 8px 12px; border-radius: 12px; margin: 10px 0 14px;
+            border-left: 3px solid var(--accent);
+        }
+        .tool-website { margin-bottom: 12px; font-size: 0.9rem; }
+        .tool-website a { color: var(--primary); text-decoration: none; font-weight: 500; }
+        .download-group {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;
+            position: relative; z-index: 10;
+        }
+        .btn-download {
+            padding: 8px 16px; border-radius: 30px; font-size: 0.85rem;
+            text-decoration: none; font-weight: 600;
+            background: rgba(37,99,235,0.12); color: var(--primary);
+            border: 1px solid rgba(37,99,235,0.25); transition: 0.15s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        body.dark .btn-download { background: #1e293b; color: #bdd3ff; }
+        .btn-download:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-download:active { transform: scale(0.94); }
+        .no-download { opacity: 0.6; font-size: 0.85rem; font-style: italic; }
         .join-card {
             background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(124,58,237,0.05));
-            border-radius: 2rem;
-            padding: 2.5rem;
-            margin-top: 4rem;
-            border: 1px solid rgba(37, 99, 235, 0.1);
+            border-radius: 2rem; padding: 2.5rem; margin-top: 4rem;
+            border: 1px solid rgba(37,99,235,0.15);
         }
-
-		.btn-sm:active {
-			transform: scale(0.95); /* 点击时缩小到 95% */
-		}
-		.tool-card:active {
-			transform: translateY(-4px) scale(0.98); /* 抵消一部分悬浮的位移，并轻微缩小 */
-			transition: transform 0.1s ease; /* 缩短反馈时间，让响应更灵敏 */
-		}
-		.theme-toggle:active {
-			transform: scale(0.92);
-		}
-
-        .requirements { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 1.5rem 0; }
-        .req-item { font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .requirements {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px; margin: 1.5rem 0;
+        }
+        .req-item { font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
         .req-item i { color: #10b981; }
-
-        .footer { text-align: center; padding: 3rem 0; font-size: 0.8rem; opacity: 0.6; }
-
+        .loading-placeholder {
+            grid-column: 1 / -1; text-align: center; padding: 3rem;
+            font-size: 1.2rem; opacity: 0.7;
+        }
+        .footer { text-align: center; padding: 3rem 0 1.5rem; font-size: 0.8rem; opacity: 0.6; }
         @media (max-width: 768px) {
-            .hero { padding: 2rem; }
-            .hero h2 { font-size: 1.8rem; }
+            .container { padding: 1rem 1.2rem; }
+            .hero { padding: 2rem 1.5rem; }
+            .hero h2 { font-size: 1.9rem; }
             .tools-grid { grid-template-columns: 1fr; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .btn { justify-content: center; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
     <nav class="navbar">
         <div class="logo">
@@ -249,146 +186,326 @@
         <div class="badge">V3.0 智械协议 · 2026</div>
         <h2>瓦解禁锢<br>重塑机房学习主权</h2>
         <p style="max-width: 800px; margin-bottom: 2rem; font-size: 1.1rem; opacity: 0.9;">
-            我们是一个由学生开发者组成的非盈利技术组织。我们坚信技术应当回归教育的本质，而非成为监控的枷锁。
-            在这里，我们共享突破限制的利刃。
+            学生开发者组成的非盈利技术组织。技术应当回归教育本质，而非监控枷锁。
+            共享突破限制的利刃。
         </p>
-        <div style="display: flex; gap: 15px;">
-            <a href="#tools-section" class="btn-sm" style="padding: 12px 25px; background: var(--primary); color: white;">探索工具集</a>
-            <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn-sm" style="padding: 12px 25px;">申请入伙</a>
+        <div class="hero-actions">
+            <a href="#tools-section" class="btn btn-primary"><i class="fas fa-compass"></i> 探索工具集</a>
+            <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn"><i class="fab fa-github"></i> 申请入伙</a>
+            <a href="https://github.com/JumperTT/jfkl/releases/download/toolbox/JFKangL_Toolbox.zip" target="_blank" class="btn" id="toolboxDownloadBtn">
+                <i class="fas fa-download"></i> 下载工具箱
+            </a>
         </div>
     </header>
 
     <section id="tools-section">
         <div class="section-title">
             <i class="fas fa-terminal"></i>
-            <span>⚡ 抗联利刃库</span>
+            <span>⚡ 抗联利刃库 · 动态加载</span>
         </div>
         <div class="tools-grid" id="toolsContainer">
+            <div class="loading-placeholder">
+                <i class="fas fa-spinner fa-pulse"></i> 正在读取源列表...
             </div>
+        </div>
     </section>
 
     <section class="join-card">
         <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">✊ 成为“破壁者”</h3>
-        <p>我们欢迎每一位有志于通过技术改变现状的开发者。只要你的作品符合以下条件：</p>
+        <p>我们欢迎每一位有志通过技术改变现状的开发者。你的作品需要满足：</p>
         <div class="requirements">
-            <div class="req-item"><i class="fas fa-check"></i> 具有实质性功能突破</div>
+            <div class="req-item"><i class="fas fa-check"></i> 实质性功能突破</div>
             <div class="req-item"><i class="fas fa-check"></i> 独立开发的原创工具</div>
-            <div class="req-item"><i class="fas fa-check"></i> 至少经过两次版本迭代</div>
+            <div class="req-item"><i class="fas fa-check"></i> 至少两次版本迭代</div>
             <div class="req-item"><i class="fas fa-check"></i> 代码仓库公开发布</div>
         </div>
-        <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn-sm" style="display: inline-block; margin-top: 10px;">
+        <a href="https://github.com/JumperTT/jfkl/issues" target="_blank" class="btn btn-primary" style="display: inline-block;">
             <i class="fab fa-github"></i> 在 GitHub 提交入伙申请
         </a>
     </section>
 
     <footer class="footer">
         <p><i class="fas fa-code"></i> 机房抗联 · 技术无罪 | 2024 - 2026</p>
-        <p style="margin-top: 10px; font-size: 0.7rem;">仅限技术交流与学习研究，请自觉遵守当地法律法规。</p>
+        <p style="margin-top: 10px; font-size: 0.7rem;">仅限技术交流与学习研究，请遵守当地法律法规。</p>
     </footer>
 </div>
 
 <script>
-    // 工具数据
-    const toolsData = [
-        {
-            name: "SCLTK",
-            dev: "MaxLHy0424",
-            ver: "v7.1.4",
-            desc: "现代 C++ 构建，支持全版本极域、联想云教室、红蜘蛛、Veyon 等主流环境的深度破解与接管。",
-            link: "https://github.com/MaxLHy0424/SCLTK",
-            icon: "fas fa-microchip"
-        },
-        {
-            name: "Free eClass",
-            dev: "HVK科技",
-            ver: "v6.0.3",
-            desc: "专为冷门电子教室设计，独家“游戏隐藏”模式，反截图试验阶段功能，让选中的窗口消失在教师端。",
-            link: "http://fec-hvk.cc.cd",
-            icon: "fas fa-ghost"
-        },
-        {
-            name: "机房管理杀手",
-            dev: "zmas cloud",
-            ver: "v0.0.16",
-            desc: "针对机房管理助手及极域 V12 的快速清理程序，一键恢复纯净系统环境，支持在线功能面板。",
-            link: "http://65rnuilTGo.jfglss.icu/",
-            icon: "fas fa-skull-crossbones"
-        },
-        {
-            name: "ClassZero",
-            dev: "Ptlcx2048",
-            ver: "v1.4.1",
-            desc: "极致轻量化（<1MB），支持联网密码破解、脱离控制、一键恢复，是快速突围的便携利器。",
-            link: "https://tQCzrCwvK8.pp1p.cfd",
-            icon: "fas fa-bolt"
+    (function(){
+        "use strict";
+
+        // 随机4位字符（大小写字母+数字），用于 * 替换
+        function random4Chars() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let res = '';
+            for (let i=0; i<4; i++) res += chars[Math.floor(Math.random() * chars.length)];
+            return res;
         }
-    ];
 
-    // 渲染卡片
-    const container = document.getElementById('toolsContainer');
-    toolsData.forEach(tool => {
-        const card = document.createElement('div');
-        card.className = 'tool-card';
-        card.innerHTML = `
-            <div class="tool-header">
-                <div class="tool-icon"><i class="${tool.icon}"></i></div>
-                <div>
-                    <div class="tool-name">${tool.name} <span class="tool-version">${tool.ver}</span></div>
-                    <div style="font-size: 0.7rem; opacity: 0.6;">开发者: ${tool.dev}</div>
-                </div>
-            </div>
-            <p class="tool-desc">${tool.desc}</p>
-            <div class="card-actions">
-                <a href="${tool.link}" target="_blank" class="btn-sm"><i class="fas fa-external-link-alt"></i> 获取作品</a>
-            </div>
-        `;
+        // 主题
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const themeText = document.getElementById('themeText');
+        function setTheme(isDark) {
+            document.body.classList.toggle('dark', isDark);
+            themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            themeText.innerText = isDark ? '浅色模式' : '深色模式';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        themeBtn.addEventListener('click', () => setTheme(!document.body.classList.contains('dark')));
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') setTheme(true);
+        else if (saved === 'light') setTheme(false);
 
-        // 核心：点击卡片任何位置触发水波纹
-        card.addEventListener('click', function(e) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        function fixUrl(url) {
+            if (!url || typeof url !== 'string') return '';
+            url = url.trim();
+            if (!url.startsWith('http')) return 'https://' + url;
+            return url;
+        }
 
-            const ripple = document.createElement('span');
-            ripple.className = 'ripple';
-            
-            // 计算波纹直径，确保能覆盖整个卡片
-            const size = Math.max(rect.width, rect.height) * 2;
-            ripple.style.width = ripple.style.height = `${size}px`;
-            ripple.style.left = `${x - size/2}px`;
-            ripple.style.top = `${y - size/2}px`;
+        function processUrlLine(line) {
+            let s = line.trim();
+            if (s === '' || s.startsWith('#')) return null;
+            s = s.replace(/\*/g, () => random4Chars());
+            return s;
+        }
 
-            this.appendChild(ripple);
+        function parseDownloadField(raw) {
+            if (!raw) return [];
+            const items = Array.isArray(raw) ? raw : [raw];
+            return items.map(item => {
+                if (typeof item !== 'string') return null;
+                const colonIdx = item.indexOf(':');
+                let name, urlPart;
+                if (colonIdx === -1) { name = '下载'; urlPart = item; }
+                else { name = item.substring(0, colonIdx).trim(); urlPart = item.substring(colonIdx + 1).trim(); }
+                return { name: name || '下载', url: fixUrl(urlPart) };
+            }).filter(Boolean);
+        }
 
-            // 动画结束后移除元素
-            ripple.addEventListener('animationend', () => {
-                ripple.remove();
+        function processManifest(manifest) {
+            const m = { ...manifest };
+            if (m.url) m.url = fixUrl(m.url);
+            if (m.icon_url) m.icon_url = fixUrl(m.icon_url);
+            return m;
+        }
+
+        const container = document.getElementById('toolsContainer');
+        
+        // JSONP 请求函数
+        let jsonpCounter = 0;
+        function jsonpRequest(url, callbackName) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const timeout = setTimeout(() => {
+                    reject(new Error('JSONP 超时'));
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                }, 15000);
+
+                window[callbackName] = (data) => {
+                    clearTimeout(timeout);
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    resolve(data);
+                };
+
+                script.src = url;
+                script.onerror = () => {
+                    clearTimeout(timeout);
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('JSONP 网络错误'));
+                };
+                document.body.appendChild(script);
             });
+        }
+
+        // 从 proxy.json 加载代理列表，随机选一个
+        async function loadProxyBase() {
+            try {
+                const resp = await fetch('./proxy.json', { cache: 'no-cache' });
+                if (!resp.ok) throw new Error('proxy.json 加载失败');
+                const list = await resp.json();
+                if (!Array.isArray(list) || list.length === 0) throw new Error('代理列表为空');
+                // 随机选择一个代理基础地址
+                const base = list[Math.floor(Math.random() * list.length)];
+                // 确保末尾没有斜杠
+                return base.replace(/\/+$/, '');
+            } catch (e) {
+                console.warn('代理列表加载失败，将显示备用数据', e);
+                return null;
+            }
+        }
+
+        // 创建卡片
+        function createToolCard(manifest, baseUrl) {
+            const m = processManifest(manifest);
+            const downloadItems = parseDownloadField(manifest.download_url);
+            const card = document.createElement('div');
+            card.className = 'tool-card';
+
+            // 图标：支持常见图片格式
+            const iconHtml = m.icon_url 
+                ? `<img src="${m.icon_url}" alt="icon" onerror="this.parentElement.innerHTML='<i class=\'fas fa-cube\'></i>'">`
+                : '<i class="fas fa-cube"></i>';
+
+            const name = m.name || '未命名';
+            const dev = m.developer || '匿名';
+            const ver = m.version || 'v0.0.0';
+            const desc = (m.description || '暂无描述').replace(/\n/g, ' ');
+            const update = (m.update_content || '').replace(/\n/g, ' ');
+            const website = m.url || fixUrl(baseUrl);
+
+            const downloadHtml = downloadItems.length 
+                ? downloadItems.map(d => `<a href="${d.url}" target="_blank" rel="noopener" class="btn-download"><i class="fas fa-download"></i> ${d.name}</a>`).join('')
+                : '<span class="no-download"><i class="fas fa-ban"></i> 暂无下载源</span>';
+
+            const updateBlock = update ? `<div class="update-content"><i class="fas fa-sync-alt"></i> 更新: ${update}</div>` : '';
+
+            card.innerHTML = `
+                <div class="tool-header">
+                    <div class="tool-icon">${iconHtml}</div>
+                    <div>
+                        <div class="tool-name">${name} <span class="tool-version">${ver}</span></div>
+                        <div class="tool-dev"><i class="fas fa-user-astronaut"></i> ${dev}</div>
+                    </div>
+                </div>
+                <p class="tool-desc">${desc}</p>
+                ${updateBlock}
+                <div class="tool-website"><i class="fas fa-globe"></i> <a href="${website}" target="_blank">${website}</a></div>
+                <div class="download-group">${downloadHtml}</div>
+            `;
+
+            card.addEventListener('click', function(e) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const size = Math.max(rect.width, rect.height) * 2;
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
+                ripple.style.left = (x - size/2) + 'px';
+                ripple.style.top = (y - size/2) + 'px';
+                card.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+
+            return card;
+        }
+
+        // 备用数据
+        const FALLBACK_MANIFESTS = [
+            { name: 'SCLTK (备用)', developer: 'MaxLHy0424', version: 'v7.1.4', description: '备用示例', url: '#' },
+            { name: '机房管理杀手 (备用)', developer: 'zmas cloud', version: 'v0.0.16', description: '备用示例', url: '#' }
+        ];
+
+        function showLoading(msg) {
+            container.innerHTML = `<div class="loading-placeholder"><i class="fas fa-spinner fa-pulse"></i> ${msg}</div>`;
+        }
+
+        function loadFallback() {
+            container.innerHTML = '';
+            FALLBACK_MANIFESTS.forEach(m => container.appendChild(createToolCard(m, '#')));
+            const hint = document.createElement('div');
+            hint.className = 'loading-placeholder';
+            hint.style.gridColumn = '1/-1';
+            hint.innerHTML = '<i class="fas fa-database"></i> 网络加载失败，显示内置备用工具列表。';
+            container.appendChild(hint);
+        }
+
+        async function loadTools() {
+            showLoading('正在读取代理配置...');
+            
+            // 1. 获取代理基础地址
+            const proxyBase = await loadProxyBase();
+            if (!proxyBase) {
+                loadFallback();
+                return;
+            }
+
+            showLoading('正在读取本地 jfkl_urls.txt ...');
+            try {
+                // 2. 获取工具域名列表
+                const listResp = await fetch('./jfkl_urls.txt', { cache: 'no-cache' });
+                if (!listResp.ok) throw new Error('列表文件不存在');
+                const text = await listResp.text();
+                const lines = text.split(/\r?\n/);
+                const baseSet = new Set();
+                lines.forEach(line => {
+                    const p = processUrlLine(line);
+                    if (p) baseSet.add(p);
+                });
+                const baseUrls = Array.from(baseSet);
+                if (baseUrls.length === 0) {
+                    loadFallback();
+                    return;
+                }
+
+                showLoading(`正在通过 JSONP 代理获取 ${baseUrls.length} 个工具...`);
+
+                // 3. 并发通过 JSONP 请求每个 manifest
+                const manifestPromises = baseUrls.map(async (base) => {
+                    const targetUrl = 'https://' + base.replace(/\/$/, '') + '/jfkl_manifest.json';
+                    const callback = 'jfkl_cb_' + (++jsonpCounter);
+                    const proxyUrl = proxyBase + '?url=' + encodeURIComponent(targetUrl) + '&callback=' + callback;
+                    try {
+                        const json = await jsonpRequest(proxyUrl, callback);
+                        return { base, ok: true, manifest: json };
+                    } catch (e) {
+                        console.warn(`加载失败: ${targetUrl}`, e);
+                        return { base, ok: false };
+                    }
+                });
+
+                const results = await Promise.all(manifestPromises);
+                container.innerHTML = '';
+                let rendered = 0;
+                results.forEach(r => {
+                    if (r.ok && r.manifest) {
+                        try {
+                            container.appendChild(createToolCard(r.manifest, r.base));
+                            rendered++;
+                        } catch (e) { console.error(e); }
+                    }
+                });
+
+                if (rendered === 0) {
+                    loadFallback();
+                } else {
+                    const failed = results.length - rendered;
+                    if (failed > 0) {
+                        const hint = document.createElement('div');
+                        hint.className = 'loading-placeholder';
+                        hint.style.gridColumn = '1/-1';
+                        hint.innerHTML = `<i class="fas fa-info-circle"></i> ${failed} 个工具加载失败，已显示成功项。`;
+                        container.appendChild(hint);
+                    }
+                }
+            } catch (e) {
+                console.error('加载流程错误:', e);
+                loadFallback();
+            }
+        }
+
+        loadTools();
+
+        document.getElementById('toolboxDownloadBtn')?.addEventListener('click', function(){
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => this.style.transform = '', 120);
         });
 
-        container.appendChild(card);
-    });
-
-    // 主题切换逻辑
-    const themeBtn = document.getElementById('themeToggleBtn');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeText = document.getElementById('themeText');
-
-    themeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark');
-        const isDark = document.body.classList.contains('dark');
-        themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
-        themeText.innerText = isDark ? '浅色模式' : '深色模式';
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    });
-
-    // 读取本地配置
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark');
-        themeIcon.className = 'fas fa-sun';
-        themeText.innerText = '浅色模式';
-    }
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const href = a.getAttribute('href');
+                if (href === '#' || href === '') return;
+                const target = document.querySelector(href);
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+            });
+        });
+    })();
 </script>
-
 </body>
 </html>
