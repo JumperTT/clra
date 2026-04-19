@@ -218,6 +218,17 @@
             left: 100%;
         }
 
+        /* 错误卡片样式 */
+        .tool-card.error-card {
+            border-color: #dc3545;
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .tool-card.error-card:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
         .tool-header {
             display: flex;
             align-items: flex-start;
@@ -369,6 +380,32 @@
             color: #dc3545;
         }
 
+        .cors-info {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .cors-info h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cors-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .cors-info li {
+            margin: 5px 0;
+            color: #856404;
+
+
         footer {
             text-align: center;
             padding: 40px 0;
@@ -465,6 +502,17 @@
             <i class="fas fa-exclamation-triangle"></i>
             <h3>加载失败</h3>
             <p>无法加载工具列表，请检查网络连接或联系管理员</p>
+
+            <div class="cors-info">
+                <h4><i class="fas fa-info-circle"></i> 常见加载问题</h4>
+                <ul>
+                    <li><strong>跨域请求被阻止</strong> - 服务器需要配置CORS策略</li>
+                    <li><strong>网络连接失败</strong> - 检查网络连接和域名是否可达</li>
+                    <li><strong>工具清单不存在</strong> - 确认域名下有clra_manifest.json文件</li>
+                    <li><strong>泛域名解析失败</strong> - 检查域名格式是否正确</li>
+                </ul>
+                <p style="margin-top: 10px;">点击右下角的 <i class="fas fa-bug"></i> 按钮查看详细调试信息</p>
+            </div>
         </div>
 
         <div class="tools-grid" id="toolsGrid">
@@ -680,31 +728,39 @@
                     `;
                 });
 
+                // 如果是错误工具，使用特殊样式
+                const isError = tool.isError;
+                const cardClass = isError ? 'tool-card error-card' : 'tool-card';
+                const iconClass = isError ? 'fas fa-exclamation-triangle' : 'fas fa-cogs';
+                const iconColor = isError ? '#dc3545' : 'var(--accent-color)';
+
                 return `
-                    <div class="tool-card">
+                    <div class="${cardClass}">
                         <div class="tool-header">
-                            <div class="tool-icon">
+                            <div class="tool-icon" style="background: ${isError ? 'rgba(220, 53, 69, 0.1)' : 'var(--bg-secondary)'};">
                                 ${iconUrl ? `<img src="${iconUrl}" alt="${escapedName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` : ''}
-                                <i class="fas fa-cogs" style="display: ${iconUrl ? 'none' : 'flex'};"></i>
+                                <i class="${iconClass}" style="display: ${iconUrl ? 'none' : 'flex'}; color: ${iconColor};"></i>
                             </div>
                             <div class="tool-info">
-                                <h3>${escapedName}</h3>
+                                <h3 style="color: ${isError ? '#dc3545' : 'var(--text-primary)'};">${escapedName}</h3>
                                 <div class="tool-meta">
-                                    <span class="version-badge">v${escapeHtml(tool.version)}</span>
+                                    <span class="version-badge" style="background: ${isError ? '#dc3545' : 'var(--accent-color)'};">
+                                        ${isError ? '错误' : `v${escapeHtml(tool.version)}`}
+                                    </span>
                                     <span class="developer">by ${escapedDeveloper}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="tool-description">${escapedDescription}</div>
+                        <div class="tool-description" style="color: ${isError ? '#dc3545' : 'var(--text-secondary)'};">${escapedDescription}</div>
 
                         ${escapedUpdateContent ? `<div class="update-content"><strong>更新内容:</strong><br>${escapedUpdateContent}</div>` : ''}
 
                         <div class="tool-actions">
-                            ${projectUrl ? `<a href="${escapeHtml(projectUrl)}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                            ${!isError && projectUrl ? `<a href="${escapeHtml(projectUrl)}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-external-link-alt"></i> 项目主页
                             </a>` : ''}
-                            ${downloadButtonsHtml}
+                            ${!isError ? downloadButtonsHtml : ''}
                         </div>
                     </div>
                 `;
@@ -744,23 +800,63 @@
                     const manifestUrl = `https://${processedDomain}/clra_manifest.json`;
                     debug.log(`正在加载清单文件: ${manifestUrl}`);
 
-                    const response = await fetch(manifestUrl, {
-                        mode: 'cors',
-                        headers: {
-                            'Accept': 'application/json'
+                    // 尝试不同的CORS模式
+                    let response;
+                    try {
+                        // 首先尝试CORS模式
+                        response = await fetch(manifestUrl, {
+                            mode: 'cors',
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+                    } catch (corsError) {
+                        // 如果CORS失败，尝试no-cors模式（虽然无法读取响应内容，但可以检测服务是否可达）
+                        debug.log(`CORS请求失败，尝试检测服务可用性: ${domain}`, 'warn');
+                        try {
+                            const noCorsResponse = await fetch(manifestUrl, {
+                                mode: 'no-cors'
+                            });
+                            // no-cors模式下无法读取响应，但可以确认服务是否可达
+                            throw new Error('CORS策略阻止访问 - 服务器需要配置Access-Control-Allow-Origin头');
+                        } catch (noCorsError) {
+                            throw new Error(`网络请求失败: ${noCorsError.message}`);
                         }
-                    });
+                    }
 
                     if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
+                        throw new Error(`HTTP ${response.status} - ${response.statusText}`);
                     }
 
                     const manifest = await response.json();
                     debug.log(`成功加载清单: ${domain}`, 'success');
                     return manifest;
                 } catch (error) {
-                    debug.log(`加载清单失败 ${domain}: ${error.message}`, 'error');
-                    return null;
+                    let errorMessage = error.message;
+
+                    // 提供更友好的错误信息
+                    if (error.message.includes('CORS') || error.message.includes('Access-Control-Allow-Origin')) {
+                        errorMessage = '跨域请求被阻止 - 请联系工具提供者配置CORS策略';
+                    } else if (error.message.includes('Failed to fetch') || error.message.includes('network')) {
+                        errorMessage = '网络连接失败 - 请检查网络连接或域名是否可达';
+                    } else if (error.message.includes('HTTP 404')) {
+                        errorMessage = '工具清单文件不存在 - 请确认域名配置正确';
+                    }
+
+                    debug.log(`加载清单失败 ${domain}: ${errorMessage}`, 'error');
+
+                    // 创建错误工具卡片信息
+                    return {
+                        name: `错误: ${domain}`,
+                        developer: '系统',
+                        version: 'N/A',
+                        description: `无法加载此工具\n原因: ${errorMessage}\n\n请检查:\n1. 网络连接是否正常\n2. 域名配置是否正确\n3. 联系工具提供者解决CORS问题`,
+                        update_content: null,
+                        url: null,
+                        download_url: [],
+                        icon_url: null,
+                        isError: true
+                    };
                 }
             }
 
