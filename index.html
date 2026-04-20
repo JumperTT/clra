@@ -695,24 +695,34 @@
             function parseDownloadUrls(downloadUrl) {
                 if (!downloadUrl) return [];
 
-                // 如果是字符串，转换为数组
+                // 如果是字符串，直接解析
                 if (typeof downloadUrl === 'string') {
+                    const colonIndex = downloadUrl.indexOf(':');
+                    if (colonIndex !== -1) {
+                        const text = downloadUrl.substring(0, colonIndex).trim();
+                        const url = downloadUrl.substring(colonIndex + 1).trim();
+                        return [{ text, url }];
+                    }
                     return [{ text: '下载', url: downloadUrl }];
                 }
 
                 // 如果是数组，解析每个元素
-                return downloadUrl.map(item => {
-                    if (typeof item === 'string') {
-                        const colonIndex = item.indexOf(':');
-                        if (colonIndex !== -1) {
-                            const text = item.substring(0, colonIndex).trim();
-                            const url = item.substring(colonIndex + 1).trim();
-                            return { text, url };
+                if (Array.isArray(downloadUrl)) {
+                    return downloadUrl.map(item => {
+                        if (typeof item === 'string') {
+                            const colonIndex = item.indexOf(':');
+                            if (colonIndex !== -1) {
+                                const text = item.substring(0, colonIndex).trim();
+                                const url = item.substring(colonIndex + 1).trim();
+                                return { text, url };
+                            }
+                            return { text: '下载', url: item };
                         }
                         return { text: '下载', url: item };
-                    }
-                    return { text: '下载', url: item };
-                });
+                    });
+                }
+
+                return [];
             }
 
             /**
