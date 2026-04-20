@@ -36,6 +36,30 @@ function generateRandomString(length = 16) {
     return result;
 }
 
+// 生成固定的泛域名替换字符串（与前端保持一致）
+function generateFixedWildcardString(wildcardDomain) {
+    // 使用域名作为种子，生成固定的16位字符串
+    // 这确保相同的泛域名总是生成相同的结果
+    let hash = 0;
+    for (let i = 0; i < wildcardDomain.length; i++) {
+        const char = wildcardDomain.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // 转换为32位整数
+    }
+
+    // 生成16位固定字符串
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    let seed = Math.abs(hash);
+
+    for (let i = 0; i < 16; i++) {
+        seed = (seed * 9301 + 49297) % 233280;
+        result += chars.charAt(seed % chars.length);
+    }
+
+    return result;
+}
+
 // 处理泛域名
 function processWildcardDomain(domain) {
     if (domain.includes('*')) {
@@ -47,8 +71,8 @@ function processWildcardDomain(domain) {
             log(`使用缓存的泛域名实例: ${cachedDomain}`);
             return cachedDomain;
         } else {
-            // 生成新的泛域名实例
-            const resolvedDomain = domain.replace(/\*/g, generateRandomString());
+            // 生成新的泛域名实例（使用固定算法确保前后端一致）
+            const resolvedDomain = domain.replace(/\*/g, generateFixedWildcardString(domain));
 
             // 缓存生成的域名
             fs.writeFileSync(wildcardCacheFile, resolvedDomain);

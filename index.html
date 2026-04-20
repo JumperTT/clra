@@ -213,22 +213,51 @@
                     return domain;
                 }
 
-                // 检查缓存
+                // 检查内存缓存
                 if (state.wildcardCache.has(domain)) {
                     const cached = state.wildcardCache.get(domain);
                     debug.log(`从缓存获取泛域名解析: ${domain} -> ${cached}`);
                     return cached;
                 }
 
-                // 生成新的随机域名
-                const randomString = generateRandomString();
-                const processedDomain = domain.replace(/\*/g, randomString);
+                // 使用固定的生成逻辑来确保前后端一致
+                // 这确保相同的泛域名总是生成相同的结果
+                const fixedString = generateFixedWildcardString(domain);
+                const processedDomain = domain.replace(/\*/g, fixedString);
 
                 // 缓存结果
                 state.wildcardCache.set(domain, processedDomain);
 
                 debug.log(`泛域名解析: ${domain} -> ${processedDomain}`);
                 return processedDomain;
+            }
+
+            /**
+             * 生成固定的泛域名替换字符串（与后端保持一致）
+             * @param {string} wildcardDomain - 泛域名
+             * @returns {string} 16位固定字符串
+             */
+            function generateFixedWildcardString(wildcardDomain) {
+                // 使用域名作为种子，生成固定的16位字符串
+                // 这确保相同的泛域名总是生成相同的结果
+                let hash = 0;
+                for (let i = 0; i < wildcardDomain.length; i++) {
+                    const char = wildcardDomain.charCodeAt(i);
+                    hash = ((hash << 5) - hash) + char;
+                    hash = hash & hash; // 转换为32位整数
+                }
+
+                // 生成16位固定字符串
+                const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                let result = '';
+                let seed = Math.abs(hash);
+
+                for (let i = 0; i < 16; i++) {
+                    seed = (seed * 9301 + 49297) % 233280;
+                    result += chars.charAt(seed % chars.length);
+                }
+
+                return result;
             }
 
             /**
