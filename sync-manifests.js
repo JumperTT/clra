@@ -149,7 +149,12 @@ async function fetchDomainManifest(domain) {
     const validResult = results.find(result => result !== null);
 
     if (validResult) {
-        return validResult;
+        // 返回结果时包含原始域名信息
+        return {
+            ...validResult,
+            originalDomain: domain,  // 保存原始域名（可能包含*）
+            resolvedDomain: resolvedDomain  // 保存解析后的域名
+        };
     } else {
         log(`域名 ${domain} 没有可用的清单文件`, 'warn');
         return null;
@@ -181,16 +186,20 @@ function loadConfig() {
 // 保存清单缓存
 function saveManifestCache(domain, manifestData) {
     try {
-        // 创建缓存文件名（使用域名和文件名的组合，避免冲突）
-        const safeDomain = domain.replace(/[^a-zA-Z0-9]/g, '_');
+        // 使用原始域名（可能包含*）来创建缓存文件名
+        const originalDomain = manifestData.originalDomain || domain;
+
+        // 创建缓存文件名（使用原始域名，保持与前端查找逻辑一致）
+        const safeDomain = originalDomain.replace(/[^a-zA-Z0-9]/g, '_');
         const filename = manifestData.filename.replace('.json', '');
         const cacheFile = path.join(DOMAINS_CACHE_DIR, `${safeDomain}_${filename}.json`);
 
         fs.writeFileSync(cacheFile, JSON.stringify(manifestData.manifest, null, 2));
-        log(`缓存清单文件: ${cacheFile}`, 'success');
+        log(`缓存清单文件: ${cacheFile} (原始域名: ${originalDomain})`, 'success');
 
         return {
-            domain,
+            domain: originalDomain,
+            resolvedDomain: manifestData.resolvedDomain,
             cacheFile,
             manifest: manifestData.manifest
         };
