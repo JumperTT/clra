@@ -393,7 +393,7 @@
                 try {
                     // 生成缓存文件名（安全处理特殊字符）
                     // 尝试两种可能的缓存文件名格式（clra_manifest.json 和 jfkl_manifest.json）
-                    const safeDomain = domain.replace(/[\\/:*?"<>|]/g, '_');
+                    const safeDomain = domain.replace(/[\\/:*?"<>|.-]/g, '_');
 
                     // 尝试两种清单文件名的缓存
                     const manifestTypes = ['clra_manifest', 'jfkl_manifest'];
