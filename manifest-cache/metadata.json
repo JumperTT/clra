@@ -1,5 +1,5 @@
 {
-  "last_sync": "2026-04-20T15:55:13.291Z",
+  "last_sync": "2026-04-20T16:11:07.650Z",
   "total_tools": 6,
   "domains": [
     {
@@ -15,8 +15,8 @@
       "version": "6.0.3"
     },
     {
-      "domain": "p2rs5uv8xyb01e34.jfglss.icu",
-      "cache_file": "p2rs5uv8xyb01e34_jfglss_icu_clra_manifest.json",
+      "domain": "*.jfglss.icu",
+      "cache_file": "__jfglss_icu_clra_manifest.json",
       "tool_name": "机房管理杀手",
       "version": "0.0.16"
     },
@@ -27,8 +27,8 @@
       "version": "7.1.5"
     },
     {
-      "domain": "h67k9ancdqfgtijw.pp1p.cfd",
-      "cache_file": "h67k9ancdqfgtijw_pp1p_cfd_clra_manifest.json",
+      "domain": "*.pp1p.cfd",
+      "cache_file": "__pp1p_cfd_clra_manifest.json",
       "tool_name": "ClassZero",
       "version": "1.4.1"
     },
