@@ -1,0 +1,12 @@
+{
+  "name": "JFKL 测试工具",
+  "developer": "测试开发者",
+  "version": "2.1.3",
+  "update_content": "新增功能\n性能优化\n安全更新",
+  "description": "这是使用jfkl_manifest.json格式的测试工具。\n展示双清单文件格式支持。",
+  "url": "https://test.example.com",
+  "download_url": [
+    "下载工具:https://test.example.com/download"
+  ],
+  "icon_url": "https://via.placeholder.com/40x40/28a745/ffffff?text=JFKL"
+}

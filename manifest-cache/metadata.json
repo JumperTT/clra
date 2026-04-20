@@ -1,0 +1,19 @@
+{
+  "last_sync": "2026-04-20T22:49:00.000Z",
+  "total_tools": 2,
+  "domains": [
+    {
+      "domain": "clib.cc.cd",
+      "cache_file": "clib_cc_cd_clra_manifest.json",
+      "tool_name": "CLRA 示例工具",
+      "version": "1.0.0"
+    },
+    {
+      "domain": "fec-hvk.cc.cd",
+      "cache_file": "fec_hvk_cc_cd_jfkl_manifest.json",
+      "tool_name": "JFKL 测试工具",
+      "version": "2.1.3"
+    }
+  ],
+  "version": "1.0.0"
+}
