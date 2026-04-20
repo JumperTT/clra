@@ -8,6 +8,8 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 授予写入仓库内容的权限
 
     steps:
       - uses: actions/checkout@v3
@@ -29,4 +31,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add manifest-cache/
           git commit -m "Update manifest cache" || exit 0
-          git push
+          # 使用 GITHUB_TOKEN 进行推送
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/JumperTT/clra.git
