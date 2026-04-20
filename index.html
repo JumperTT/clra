@@ -668,12 +668,12 @@
              * @param {string} url - 原始URL
              * @returns {string} 带HTTPS协议的URL
              */
-            function ensureHttps(url) {
+            function processUrl(url, useHttps = true) {
                 if (!url) return '';
                 if (url.startsWith('http://') || url.startsWith('https://')) {
                     return url;
                 }
-                return `https://${url}`;
+                return useHttps ? `https://${url}` : `http://${url}`;
             }
 
             /**
@@ -737,15 +737,15 @@
                 const escapedUpdateContent = tool.update_content ? escapeHtml(tool.update_content) : '';
 
                 // 处理图标URL
-                const iconUrl = tool.icon_url ? ensureHttps(processWildcardDomain(tool.icon_url)) : null;
-                const projectUrl = tool.url ? ensureHttps(processWildcardDomain(tool.url)) : null;
+                const iconUrl = tool.icon_url ? processUrl(processWildcardDomain(tool.icon_url)) : null;
+                const projectUrl = tool.url ? processUrl(processWildcardDomain(tool.url)) : null;
 
                 // 解析下载按钮
                 const downloadButtons = parseDownloadUrls(tool.download_url);
 
                 let downloadButtonsHtml = '';
                 downloadButtons.forEach(btn => {
-                    const processedUrl = ensureHttps(processWildcardDomain(btn.url));
+                    const processedUrl = processUrl(processWildcardDomain(btn.url));
                     downloadButtonsHtml += `
                         <a href="${escapeHtml(processedUrl)}" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
                             <i class="fas fa-download"></i> ${escapeHtml(btn.text)}
@@ -827,37 +827,21 @@
                 let lastError = null;
 
                 for (const filename of manifestFiles) {
+                    // 先尝试HTTPS
                     try {
-                        const manifestUrl = `https://${processedDomain}/${filename}`;
-                        debug.log(`正在尝试加载清单文件: ${manifestUrl}`);
+                        const httpsUrl = `https://${processedDomain}/${filename}`;
+                        debug.log(`正在尝试加载清单文件: ${httpsUrl}`);
 
-                        // 尝试不同的CORS模式
-                        let response;
-                        try {
-                            // 首先尝试CORS模式
-                            response = await fetch(manifestUrl, {
-                                mode: 'cors',
-                                headers: {
-                                    'Accept': 'application/json'
-                                }
-                            });
-                        } catch (corsError) {
-                            // 如果CORS失败，尝试no-cors模式
-                            debug.log(`CORS请求失败，尝试检测服务可用性: ${domain}`, 'warn');
-                            try {
-                                const noCorsResponse = await fetch(manifestUrl, {
-                                    mode: 'no-cors'
-                                });
-                                // no-cors模式下无法读取响应，但可以确认服务是否可达
-                                throw new Error('CORS策略阻止访问 - 服务器需要配置Access-Control-Allow-Origin头');
-                            } catch (noCorsError) {
-                                throw new Error(`网络请求失败: ${noCorsError.message}`);
+                        const response = await fetch(httpsUrl, {
+                            mode: 'cors',
+                            headers: {
+                                'Accept': 'application/json'
                             }
-                        }
+                        });
 
                         if (!response.ok) {
                             if (response.status === 404) {
-                                debug.log(`清单文件不存在: ${manifestUrl}`, 'warn');
+                                debug.log(`清单文件不存在: ${httpsUrl}`, 'warn');
                                 continue; // 尝试下一个文件名
                             }
                             throw new Error(`HTTP ${response.status} - ${response.statusText}`);
@@ -866,9 +850,37 @@
                         const manifest = await response.json();
                         debug.log(`成功加载清单: ${domain} (${filename})`, 'success');
                         return manifest;
-                    } catch (error) {
-                        lastError = error;
-                        // 继续尝试下一个文件名
+                    } catch (httpsError) {
+                        debug.log(`HTTPS请求失败，尝试HTTP: ${httpsError.message}`, 'warn');
+
+                        // 如果HTTPS失败，尝试HTTP
+                        try {
+                            const httpUrl = `http://${processedDomain}/${filename}`;
+                            debug.log(`正在尝试HTTP加载: ${httpUrl}`);
+
+                            const response = await fetch(httpUrl, {
+                                mode: 'cors',
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            });
+
+                            if (!response.ok) {
+                                if (response.status === 404) {
+                                    debug.log(`清单文件不存在: ${httpUrl}`, 'warn');
+                                    continue; // 尝试下一个文件名
+                                }
+                                throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+                            }
+
+                            const manifest = await response.json();
+                            debug.log(`成功加载清单(HTTP): ${domain} (${filename})`, 'success');
+                            return manifest;
+                        } catch (httpError) {
+                            debug.log(`HTTP请求也失败: ${httpError.message}`, 'warn');
+                            lastError = httpsError; // 记录HTTPS错误作为主要错误
+                            continue; // 尝试下一个文件名
+                        }
                     }
                 }
 
