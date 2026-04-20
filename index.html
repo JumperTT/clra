@@ -6,479 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CLRA 分发平台</title>
 
-    <!-- Font Awesome for icons - 使用优化CDN -->
-    <link rel="stylesheet" href="https://fontawesome.ywxmz.com/6.4.0/css/all.min.css">
+    <!-- 外部样式文件 -->
+    <link rel="stylesheet" href="styles.css">
 
+    <!-- Font Awesome for icons - 使用官方CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 缓存状态样式 -->
     <style>
-        /* CSS Variables for theming */
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-card: #ffffff;
-            --text-primary: #2c3e50;
-            --text-secondary: #6c757d;
-            --border-color: #e9ecef;
-            --accent-color: #007bff;
-            --accent-hover: #0056b3;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s ease;
-        }
-
-        .dark-theme {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --bg-card: #3a3a3a;
-            --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --border-color: #4a4a4a;
-            --accent-color: #4dabf7;
-            --accent-hover: #339af0;
-            --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: var(--transition);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            padding: 40px 0;
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
-            color: white;
-            border-radius: 15px;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: pulse 3s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .theme-toggle {
+        .cache-status {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            z-index: 1000;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* 调试信息样式 */
-        .debug-info {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 10px 15px;
             font-size: 12px;
             color: var(--text-secondary);
-            max-width: 300px;
-            z-index: 1000;
+            z-index: 999;
             box-shadow: var(--shadow);
-            display: none;
         }
 
-        .debug-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+        .cache-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            background-color: var(--accent-color);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: var(--shadow);
-            margin-right: 60px;
+            margin-right: 6px;
         }
 
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            display: none;
-        }
+        .cache-fresh { background: #28a745; }
+        .cache-stale { background: #ffc107; }
+        .cache-error { background: #dc3545; }
 
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .tool-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            padding: 25px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .tool-card:hover::before {
-            left: 100%;
-        }
-
-        /* 错误卡片样式 */
-        .tool-card.error-card {
-            border-color: #dc3545;
-            background: rgba(220, 53, 69, 0.05);
-        }
-
-        .tool-card.error-card:hover {
-            transform: none;
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
-        }
-
-        .tool-header {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .tool-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            margin-right: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-secondary);
-            flex-shrink: 0;
-        }
-
-        .tool-icon img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .tool-icon i {
-            font-size: 2rem;
-            color: var(--accent-color);
-        }
-
-        .tool-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 5px;
-            color: var(--text-primary);
-        }
-
-        .tool-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .version-badge {
-            background: var(--accent-color);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .developer {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .tool-description {
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .update-content {
-            background: var(--bg-secondary);
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 3px solid var(--accent-color);
-            font-size: 0.9rem;
-        }
-
-        .tool-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn-primary {
-            background: var(--accent-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background: var(--border-color);
-            transform: translateY(-2px);
-        }
-
-        .error-message {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-            display: none;
-        }
-
-        .error-message.active {
-            display: block;
-        }
-
-        .error-message i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #dc3545;
-        }
-
-        .cors-info {
-            background: rgba(255, 193, 7, 0.1);
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .cors-info h4 {
-            color: #856404;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .cors-info ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-
-        .cors-info li {
-            margin: 5px 0;
-            color: #856404;
-
-
-        footer {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-color);
-            margin-top: 40px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            header h1 {
-                font-size: 2rem;
-            }
-
-            header p {
-                font-size: 1rem;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .tool-card {
-                padding: 20px;
-            }
-
-            .theme-toggle {
-                top: 15px;
-                right: 15px;
-                width: 45px;
-                height: 45px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                padding: 30px 0;
-            }
-
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            .tool-header {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-
-            .tool-icon {
-                margin-right: 0;
-                margin-bottom: 15px;
-            }
+        .last-update {
+            margin-top: 4px;
+            font-size: 10px;
+            opacity: 0.8;
         }
     </style>
+
 </head>
 
 <body>
@@ -654,7 +222,7 @@
 
                 // 生成新的随机域名
                 const randomString = generateRandomString();
-                const processedDomain = domain.replace('*', randomString);
+                const processedDomain = domain.replace(/\*/g, randomString);
 
                 // 缓存结果
                 state.wildcardCache.set(domain, processedDomain);
@@ -736,7 +304,7 @@
                 const escapedDescription = escapeHtml(tool.description).replace(/\\n/g, '<br>');
                 const escapedUpdateContent = tool.update_content ? escapeHtml(tool.update_content) : '';
 
-                // 处理图标URL
+                // 处理URL（缓存中的域名已经过处理，但URL中的泛域名还需要处理）
                 const iconUrl = tool.icon_url ? processUrl(processWildcardDomain(tool.icon_url)) : null;
                 const projectUrl = tool.url ? processUrl(processWildcardDomain(tool.url)) : null;
 
@@ -753,11 +321,12 @@
                     `;
                 });
 
-                // 如果是错误工具，使用特殊样式
+                // 检查工具加载状态
                 const isError = tool.isError;
-                const cardClass = isError ? 'tool-card error-card' : 'tool-card';
-                const iconClass = isError ? 'fas fa-exclamation-triangle' : 'fas fa-cogs';
-                const iconColor = isError ? '#dc3545' : 'var(--accent-color)';
+                const isFallback = tool._fallback_loaded === true;
+                const cardClass = isError ? 'tool-card error-card' : (isFallback ? 'tool-card fallback-card' : 'tool-card');
+                const iconClass = isError ? 'fas fa-exclamation-triangle' : (isFallback ? 'fas fa-wifi' : 'fas fa-cogs');
+                const iconColor = isError ? '#dc3545' : (isFallback ? '#ff9500' : 'var(--accent-color)');
 
                 return `
                     <div class="${cardClass}">
@@ -769,10 +338,11 @@
                             <div class="tool-info">
                                 <h3 style="color: ${isError ? '#dc3545' : 'var(--text-primary)'};">${escapedName}</h3>
                                 <div class="tool-meta">
-                                    <span class="version-badge" style="background: ${isError ? '#dc3545' : 'var(--accent-color)'};">
-                                        ${isError ? '错误' : `v${escapeHtml(tool.version)}`}
+                                    <span class="version-badge" style="background: ${isError ? '#dc3545' : (isFallback ? '#ff9500' : 'var(--accent-color)')};">
+                                        ${isError ? '错误' : (isFallback ? '实时' : `v${escapeHtml(tool.version)}`)}
                                     </span>
                                     <span class="developer">by ${escapedDeveloper}</span>
+                                    ${isFallback ? '<span class="developer" style="color: #ff9500;">(回退加载)</span>' : ''}
                                 </div>
                             </div>
                         </div>
@@ -815,11 +385,63 @@
             }
 
             /**
-             * 拉取清单文件
+             * 从缓存加载工具清单
+             * @param {string} domain - 原始域名
+             * @returns {Promise<Object>} 工具信息
+             */
+            async function fetchManifestFromCache(domain) {
+                try {
+                    // 生成缓存文件名（安全处理特殊字符）
+                    // 尝试两种可能的缓存文件名格式（clra_manifest.json 和 jfkl_manifest.json）
+                    const safeDomain = domain.replace(/[\\/:*?"<>|]/g, '_');
+
+                    // 尝试两种清单文件名的缓存
+                    const manifestTypes = ['clra_manifest', 'jfkl_manifest'];
+                    let cachedData = null;
+                    let usedCacheFile = null;
+
+                    for (const manifestType of manifestTypes) {
+                        const cacheFileName = `${safeDomain}_${manifestType}.json`;
+                        const cacheUrl = `/manifest-cache/domains/${cacheFileName}`;
+
+                        debug.log(`正在从缓存加载清单: ${cacheUrl}`);
+
+                        try {
+                            const response = await fetch(cacheUrl);
+
+                            if (response.ok) {
+                                cachedData = await response.json();
+                                usedCacheFile = cacheFileName;
+                                break;
+                            }
+                        } catch (error) {
+                            debug.log(`缓存文件不存在: ${cacheUrl}`, 'warn');
+                            continue;
+                        }
+                    }
+
+                    if (!cachedData) {
+                        throw new Error(`没有找到缓存文件: ${domain}`);
+                    }
+
+                    debug.log(`成功从缓存加载工具: ${cachedData.name} (缓存文件: ${usedCacheFile})`, 'success');
+                    return cachedData;
+
+                } catch (error) {
+                    debug.log(`缓存加载失败 ${domain}: ${error.message}`, 'warn');
+                    debug.log(`正在回退到直接请求原始服务器: ${domain}`);
+
+                    // 回退到直接请求原始服务器
+                    return await fetchManifestDirect(domain);
+                }
+            }
+
+            /**
+             * 直接请求原始服务器的工具清单（回退机制）
              * @param {string} domain - 域名
              * @returns {Promise<Object>} 工具信息
              */
-            async function fetchManifest(domain) {
+            async function fetchManifestDirect(domain) {
                 const processedDomain = processWildcardDomain(domain);
 
                 // 尝试两种文件名
@@ -830,7 +452,7 @@
                     // 先尝试HTTPS
                     try {
                         const httpsUrl = `https://${processedDomain}/${filename}`;
-                        debug.log(`正在尝试加载清单文件: ${httpsUrl}`);
+                        debug.log(`回退: 正在尝试HTTPS加载清单: ${httpsUrl}`);
 
                         const response = await fetch(httpsUrl, {
                             mode: 'cors',
@@ -841,22 +463,25 @@
 
                         if (!response.ok) {
                             if (response.status === 404) {
-                                debug.log(`清单文件不存在: ${httpsUrl}`, 'warn');
+                                debug.log(`回退: 清单文件不存在: ${httpsUrl}`, 'warn');
                                 continue; // 尝试下一个文件名
                             }
                             throw new Error(`HTTP ${response.status} - ${response.statusText}`);
                         }
 
                         const manifest = await response.json();
-                        debug.log(`成功加载清单: ${domain} (${filename})`, 'success');
+                        debug.log(`回退: 成功加载清单: ${domain} (${filename})`, 'success');
+
+                        // 标记为回退加载的工具
+                        manifest._fallback_loaded = true;
                         return manifest;
                     } catch (httpsError) {
-                        debug.log(`HTTPS请求失败，尝试HTTP: ${httpsError.message}`, 'warn');
+                        debug.log(`回退: HTTPS请求失败，尝试HTTP: ${httpsError.message}`, 'warn');
 
                         // 如果HTTPS失败，尝试HTTP
                         try {
                             const httpUrl = `http://${processedDomain}/${filename}`;
-                            debug.log(`正在尝试HTTP加载: ${httpUrl}`);
+                            debug.log(`回退: 正在尝试HTTP加载: ${httpUrl}`);
 
                             const response = await fetch(httpUrl, {
                                 mode: 'cors',
@@ -867,24 +492,27 @@
 
                             if (!response.ok) {
                                 if (response.status === 404) {
-                                    debug.log(`清单文件不存在: ${httpUrl}`, 'warn');
+                                    debug.log(`回退: 清单文件不存在: ${httpUrl}`, 'warn');
                                     continue; // 尝试下一个文件名
                                 }
                                 throw new Error(`HTTP ${response.status} - ${response.statusText}`);
                             }
 
                             const manifest = await response.json();
-                            debug.log(`成功加载清单(HTTP): ${domain} (${filename})`, 'success');
+                            debug.log(`回退: 成功加载清单(HTTP): ${domain} (${filename})`, 'success');
+
+                            // 标记为回退加载的工具
+                            manifest._fallback_loaded = true;
                             return manifest;
                         } catch (httpError) {
-                            debug.log(`HTTP请求也失败: ${httpError.message}`, 'warn');
+                            debug.log(`回退: HTTP请求也失败: ${httpError.message}`, 'warn');
                             lastError = httpsError; // 记录HTTPS错误作为主要错误
                             continue; // 尝试下一个文件名
                         }
                     }
                 }
 
-                // 所有文件名都尝试失败
+                // 所有方法都失败
                 let errorMessage = lastError ? lastError.message : '未知错误';
 
                 // 提供更友好的错误信息
@@ -896,11 +524,11 @@
                     errorMessage = '工具清单文件不存在 - 请确认域名下有 clra_manifest.json 或 jfkl_manifest.json 文件';
                 }
 
-                debug.log(`加载清单失败 ${domain}: ${errorMessage}`, 'error');
+                debug.log(`回退: 加载清单失败 ${domain}: ${errorMessage}`, 'error');
 
                 // 创建错误工具卡片信息
                 return {
-                    name: `错误: ${domain}`,
+                    name: `加载失败: ${domain}`,
                     developer: '系统',
                     version: 'N/A',
                     description: `无法加载此工具\n原因: ${errorMessage}\n\n请检查:\n1. 网络连接是否正常\n2. 域名配置是否正确\n3. 域名下是否有 clra_manifest.json 或 jfkl_manifest.json 文件\n4. 联系工具提供者解决CORS问题`,
@@ -939,6 +567,83 @@
             }
 
             /**
+             * 加载缓存元数据
+             * @returns {Promise<Object>} 缓存元数据
+             */
+            async function loadCacheMetadata() {
+                try {
+                    debug.log('正在加载缓存元数据');
+                    const response = await fetch('/manifest-cache/metadata.json');
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const metadata = await response.json();
+                    debug.log(`缓存元数据加载成功，最后同步时间: ${metadata.last_sync}`, 'success');
+                    return metadata;
+                } catch (error) {
+                    debug.log(`缓存元数据加载失败: ${error.message}`, 'warn');
+                    return null;
+                }
+            }
+
+            /**
+             * 更新缓存状态显示
+             * @param {Object} metadata - 缓存元数据
+             */
+            function updateCacheStatus(metadata) {
+                let statusHtml = '';
+
+                if (!metadata) {
+                    statusHtml = `
+                        <div class="cache-status">
+                            <div style="display: flex; align-items: center;">
+                                <span class="cache-indicator cache-error"></span>
+                                缓存状态: 不可用
+                            </div>
+                            <div class="last-update">缓存元数据加载失败</div>
+                        </div>
+                    `;
+                } else {
+                    const lastSync = new Date(metadata.last_sync);
+                    const now = new Date();
+                    const diffHours = Math.floor((now - lastSync) / (1000 * 60 * 60));
+
+                    let statusClass = 'cache-fresh';
+                    let statusText = '缓存正常';
+
+                    if (diffHours > 2) {
+                        statusClass = 'cache-stale';
+                        statusText = '缓存较旧';
+                    }
+                    if (diffHours > 24) {
+                        statusClass = 'cache-error';
+                        statusText = '缓存过期';
+                    }
+
+                    statusHtml = `
+                        <div class="cache-status">
+                            <div style="display: flex; align-items: center;">
+                                <span class="cache-indicator ${statusClass}"></span>
+                                缓存状态: ${statusText}
+                            </div>
+                            <div class="last-update">最后同步: ${lastSync.toLocaleString()}</div>
+                            <div class="last-update">工具数量: ${metadata.total_tools}</div>
+                        </div>
+                    `;
+                }
+
+                // 插入缓存状态到页面
+                const existingStatus = document.querySelector('.cache-status');
+                if (existingStatus) {
+                    existingStatus.outerHTML = statusHtml;
+                } else {
+                    document.body.insertAdjacentHTML('afterbegin', statusHtml);
+                }
+            }
+
+            /**
              * 初始化应用
              */
             async function init() {
@@ -948,15 +653,18 @@
                 try {
                     debug.log('应用初始化开始');
 
+                    // 首先加载缓存元数据并显示状态
+                    const metadata = await loadCacheMetadata();
+                    updateCacheStatus(metadata);
+
                     // 加载配置文件
                     const domains = await loadConfig();
                     if (domains.length === 0) {
                         throw new Error('没有找到有效的域名配置');
                     }
 
-                    // 处理泛域名并并行拉取清单
-                    const processedDomains = domains.map(domain => processWildcardDomain(domain));
-                    const manifestPromises = processedDomains.map(domain => fetchManifest(domain));
+                    // 并行从缓存加载所有工具清单
+                    const manifestPromises = domains.map(domain => fetchManifestFromCache(domain));
                     const manifests = await Promise.all(manifestPromises);
 
                     // 过滤成功的结果并去重
@@ -977,7 +685,25 @@
 
                     state.tools = uniqueTools;
 
-                    debug.log(`成功加载 ${validManifests.length} 个工具，去重后剩余 ${state.tools.length} 个工具`, 'success');
+                    // 统计加载方式
+                    const cachedTools = state.tools.filter(tool => !tool._fallback_loaded && !tool.isError).length;
+                    const fallbackTools = state.tools.filter(tool => tool._fallback_loaded).length;
+                    const errorTools = state.tools.filter(tool => tool.isError).length;
+
+                    debug.log(`加载完成: 缓存工具 ${cachedTools} 个, 回退工具 ${fallbackTools} 个, 错误工具 ${errorTools} 个`, 'success');
+
+                    // 如果有回退加载的工具，更新缓存状态显示
+                    if (fallbackTools > 0) {
+                        const fallbackStatus = document.querySelector('.cache-status');
+                        if (fallbackStatus) {
+                            fallbackStatus.innerHTML += `
+                                <div class="last-update" style="color: #ff9500; margin-top: 8px;">
+                                    ⚠ ${fallbackTools} 个工具使用实时加载
+                                </div>
+                            `;
+                        }
+                    }
+
                     renderTools();
 
                 } catch (error) {

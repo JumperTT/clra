@@ -1,303 +1,248 @@
 #!/usr/bin/env node
 
 /**
- * CLRA Manifest 同步脚本
- * 用于GitHub Actions自动同步所有域名的manifest文件
+ * CLRA 工具分发平台 - 清单同步脚本
+ * 用于GitHub Actions定时同步manifest文件到缓存
  */
 
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch');
+const https = require('https');
+const http = require('http');
 
-// 配置常量
-const CONFIG_FILE = 'clra_urls.txt';
-const CACHE_DIR = 'manifest-cache';
-const DOMAINS_DIR = path.join(CACHE_DIR, 'domains');
-const LOGS_DIR = path.join(CACHE_DIR, 'logs');
+// 配置
+const CONFIG_FILE = './clra_urls.txt';
+const CACHE_DIR = './manifest-cache';
+const DOMAINS_CACHE_DIR = path.join(CACHE_DIR, 'domains');
+const METADATA_FILE = path.join(CACHE_DIR, 'metadata.json');
+
+// 支持的manifest文件名
 const MANIFEST_FILES = ['clra_manifest.json', 'jfkl_manifest.json'];
-const RANDOM_STRING_LENGTH = 16;
-const VALID_CHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_';
 
-// 全局状态
-const state = {
-    wildcardCache: new Map(),
-    successCount: 0,
-    failureCount: 0,
-    errors: [],
-    syncTime: new Date().toISOString()
-};
+// 调试日志
+function log(message, type = 'info') {
+    const timestamp = new Date().toISOString();
+    const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+    console.log(`[${timestamp}] ${prefix} ${message}`);
+}
 
-/**
- * 生成随机字符串用于泛域名替换
- */
+// 生成随机字符串（用于泛域名）
 function generateRandomString(length = 16) {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {
-        result += VALID_CHARS.charAt(Math.floor(Math.random() * VALID_CHARS.length));
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return result;
 }
 
-/**
- * 处理泛域名
- */
-function processWildcard(domain) {
-    if (!domain.includes('*')) {
-        return domain;
+// 处理泛域名
+function processWildcardDomain(domain) {
+    if (domain.includes('*')) {
+        // 检查缓存中是否已有该泛域名的实例
+        const wildcardCacheFile = path.join(DOMAINS_CACHE_DIR, `${domain.replace(/\*/g, 'WILDCARD')}.cache`);
+
+        if (fs.existsSync(wildcardCacheFile)) {
+            const cachedDomain = fs.readFileSync(wildcardCacheFile, 'utf8').trim();
+            log(`使用缓存的泛域名实例: ${cachedDomain}`);
+            return cachedDomain;
+        } else {
+            // 生成新的泛域名实例
+            const resolvedDomain = domain.replace(/\*/g, generateRandomString());
+
+            // 缓存生成的域名
+            fs.writeFileSync(wildcardCacheFile, resolvedDomain);
+            log(`生成并缓存泛域名实例: ${resolvedDomain}`);
+
+            return resolvedDomain;
+        }
     }
-
-    if (state.wildcardCache.has(domain)) {
-        return state.wildcardCache.get(domain);
-    }
-
-    const randomString = generateRandomString(RANDOM_STRING_LENGTH);
-    const resolvedDomain = domain.replace(/\*/g, randomString);
-
-    state.wildcardCache.set(domain, resolvedDomain);
-    console.log(`泛域名解析: ${domain} -> ${resolvedDomain}`);
-
-    return resolvedDomain;
+    return domain;
 }
 
-/**
- * 生成缓存文件名（安全处理特殊字符）
- */
-function getCacheFileName(domain) {
-    return domain.replace(/[\\/:*?"<>|]/g, '_') + '.json';
+// 获取HTTP/HTTPS模块
+function getRequestModule(url) {
+    return url.startsWith('https://') ? https : http;
 }
 
-/**
- * 拉取单个manifest文件
- */
-async function fetchManifest(domain) {
-    const processedDomain = processWildcard(domain);
+// 获取清单文件
+async function fetchManifest(domain, manifestFile) {
+    return new Promise((resolve, reject) => {
+        const url = `https://${domain}/${manifestFile}`;
+        const requestModule = getRequestModule(url);
 
-    for (const filename of MANIFEST_FILES) {
-        // 先尝试HTTPS
-        try {
-            const httpsUrl = `https://${processedDomain}/${filename}`;
-            console.log(`尝试HTTPS: ${httpsUrl}`);
+        log(`尝试从 ${url} 获取清单文件`);
 
-            const response = await fetch(httpsUrl, {
-                timeout: 10000,
-                headers: {
-                    'Accept': 'application/json',
-                    'User-Agent': 'CLRA-Sync-Bot/1.0'
-                }
-            });
+        const request = requestModule.get(url, (response) => {
+            let data = '';
 
-            if (!response.ok) {
-                if (response.status === 404) {
-                    console.log(`文件不存在(HTTPS): ${httpsUrl}`);
-                    continue;
-                }
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const manifest = await response.json();
-            console.log(`成功加载(HTTPS): ${domain} (${filename})`);
-            return manifest;
-
-        } catch (httpsError) {
-            console.log(`HTTPS失败，尝试HTTP: ${httpsError.message}`);
-
-            // 尝试HTTP
-            try {
-                const httpUrl = `http://${processedDomain}/${filename}`;
-                console.log(`尝试HTTP: ${httpUrl}`);
-
-                const response = await fetch(httpUrl, {
-                    timeout: 10000,
-                    headers: {
-                        'Accept': 'application/json',
-                        'User-Agent': 'CLRA-Sync-Bot/1.0'
-                    }
+            if (response.statusCode === 200) {
+                response.on('data', (chunk) => {
+                    data += chunk;
                 });
 
-                if (!response.ok) {
-                    if (response.status === 404) {
-                        console.log(`文件不存在(HTTP): ${httpUrl}`);
-                        continue;
+                response.on('end', () => {
+                    try {
+                        const manifest = JSON.parse(data);
+                        log(`成功获取清单文件: ${domain}/${manifestFile}`, 'success');
+                        resolve({ domain, manifest, filename: manifestFile });
+                    } catch (error) {
+                        log(`解析清单文件失败: ${domain}/${manifestFile} - ${error.message}`, 'error');
+                        resolve(null);
                     }
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const manifest = await response.json();
-                console.log(`成功加载(HTTP): ${domain} (${filename})`);
-                return manifest;
-
-            } catch (httpError) {
-                console.log(`HTTP也失败: ${httpError.message}`);
-                continue; // 尝试下一个文件名
+                });
+            } else {
+                log(`HTTP ${response.statusCode}: ${url}`, 'warn');
+                resolve(null);
             }
-        }
-    }
-
-    throw new Error(`所有尝试都失败: ${domain}`);
-}
-
-/**
- * 验证manifest数据结构
- */
-function validateManifest(manifest) {
-    const requiredFields = ['name', 'developer', 'version', 'description'];
-
-    for (const field of requiredFields) {
-        if (!manifest[field]) {
-            throw new Error(`缺少必需字段: ${field}`);
-        }
-    }
-
-    // 验证数据类型
-    if (typeof manifest.name !== 'string') throw new Error('name必须是字符串');
-    if (typeof manifest.developer !== 'string') throw new Error('developer必须是字符串');
-    if (typeof manifest.version !== 'string') throw new Error('version必须是字符串');
-    if (typeof manifest.description !== 'string') throw new Error('description必须是字符串');
-
-    return true;
-}
-
-/**
- * 保存manifest到缓存
- */
-function saveManifestToCache(domain, manifest, processedDomain) {
-    const cacheFileName = getCacheFileName(domain);
-    const cacheFilePath = path.join(DOMAINS_DIR, cacheFileName);
-
-    const cacheData = {
-        ...manifest,
-        _cache_meta: {
-            original_domain: domain,
-            processed_domain: processedDomain,
-            sync_time: state.syncTime,
-            sync_version: '1.0.0'
-        }
-    };
-
-    fs.writeFileSync(cacheFilePath, JSON.stringify(cacheData, null, 2), 'utf8');
-    console.log(`已保存缓存: ${cacheFileName}`);
-}
-
-/**
- * 保存同步日志
- */
-function saveSyncLog() {
-    const logFileName = `sync-${new Date().toISOString().split('T')[0]}.log`;
-    const logFilePath = path.join(LOGS_DIR, logFileName);
-
-    const logData = {
-        sync_time: state.syncTime,
-        success_count: state.successCount,
-        failure_count: state.failureCount,
-        wildcard_cache: Object.fromEntries(state.wildcardCache),
-        errors: state.errors,
-        summary: {
-            total_domains: state.successCount + state.failureCount,
-            success_rate: state.successCount / (state.successCount + state.failureCount) * 100
-        }
-    };
-
-    fs.writeFileSync(logFilePath, JSON.stringify(logData, null, 2), 'utf8');
-}
-
-/**
- * 保存元数据
- */
-function saveMetadata() {
-    const metadataPath = path.join(CACHE_DIR, 'metadata.json');
-    const domains = fs.readdirSync(DOMAINS_DIR)
-        .filter(file => file.endsWith('.json'))
-        .map(file => {
-            const content = JSON.parse(fs.readFileSync(path.join(DOMAINS_DIR, file), 'utf8'));
-            return {
-                domain: content._cache_meta.original_domain,
-                processed_domain: content._cache_meta.processed_domain,
-                name: content.name,
-                developer: content.developer,
-                version: content.version,
-                sync_time: content._cache_meta.sync_time
-            };
         });
 
-    const metadata = {
-        last_sync: state.syncTime,
-        total_tools: domains.length,
-        domains: domains,
-        wildcard_mappings: Object.fromEntries(state.wildcardCache)
-    };
+        request.on('error', (error) => {
+            log(`请求失败: ${url} - ${error.message}`, 'error');
+            resolve(null);
+        });
 
-    fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
+        request.setTimeout(10000, () => {
+            log(`请求超时: ${url}`, 'warn');
+            request.abort();
+            resolve(null);
+        });
+    });
 }
 
-/**
- * 主函数
- */
-async function main() {
-    console.log('=== CLRA Manifest 同步开始 ===');
-    console.log(`开始时间: ${state.syncTime}`);
+// 获取域名的清单文件
+async function fetchDomainManifest(domain) {
+    log(`处理域名: ${domain}`);
 
+    // 处理泛域名
+    const resolvedDomain = processWildcardDomain(domain);
+
+    // 尝试获取所有支持的清单文件
+    const promises = MANIFEST_FILES.map(file => fetchManifest(resolvedDomain, file));
+    const results = await Promise.all(promises);
+
+    // 返回第一个成功的结果
+    const validResult = results.find(result => result !== null);
+
+    if (validResult) {
+        return validResult;
+    } else {
+        log(`域名 ${domain} 没有可用的清单文件`, 'warn');
+        return null;
+    }
+}
+
+// 加载配置文件
+function loadConfig() {
     try {
-        // 读取域名配置
-        const configContent = fs.readFileSync(CONFIG_FILE, 'utf8');
-        const domains = configContent
+        if (!fs.existsSync(CONFIG_FILE)) {
+            log(`配置文件 ${CONFIG_FILE} 不存在`, 'error');
+            return [];
+        }
+
+        const content = fs.readFileSync(CONFIG_FILE, 'utf8');
+        const domains = content
             .split('\n')
             .map(line => line.trim())
             .filter(line => line && !line.startsWith('#'));
 
-        console.log(`读取到 ${domains.length} 个域名配置`);
+        log(`加载配置文件成功，共 ${domains.length} 个域名`);
+        return domains;
+    } catch (error) {
+        log(`加载配置文件失败: ${error.message}`, 'error');
+        return [];
+    }
+}
 
-        // 同步每个域名
-        for (const domain of domains) {
-            try {
-                console.log(`\n处理域名: ${domain}`);
+// 保存清单缓存
+function saveManifestCache(domain, manifestData) {
+    try {
+        // 创建缓存文件名（使用域名和文件名的组合，避免冲突）
+        const safeDomain = domain.replace(/[^a-zA-Z0-9]/g, '_');
+        const filename = manifestData.filename.replace('.json', '');
+        const cacheFile = path.join(DOMAINS_CACHE_DIR, `${safeDomain}_${filename}.json`);
 
-                const manifest = await fetchManifest(domain);
-                validateManifest(manifest);
+        fs.writeFileSync(cacheFile, JSON.stringify(manifestData.manifest, null, 2));
+        log(`缓存清单文件: ${cacheFile}`, 'success');
 
-                const processedDomain = processWildcard(domain);
-                saveManifestToCache(domain, manifest, processedDomain);
+        return {
+            domain,
+            cacheFile,
+            manifest: manifestData.manifest
+        };
+    } catch (error) {
+        log(`保存缓存失败: ${error.message}`, 'error');
+        return null;
+    }
+}
 
-                state.successCount++;
-                console.log(`✅ 成功同步: ${domain}`);
+// 更新元数据
+function updateMetadata(cachedManifests) {
+    const metadata = {
+        last_sync: new Date().toISOString(),
+        total_tools: cachedManifests.length,
+        domains: cachedManifests.map(item => ({
+            domain: item.domain,
+            cache_file: path.basename(item.cacheFile),
+            tool_name: item.manifest.name,
+            version: item.manifest.version
+        })),
+        version: '1.0.0'
+    };
 
-            } catch (error) {
-                state.failureCount++;
-                state.errors.push({
-                    domain,
-                    error: error.message,
-                    timestamp: new Date().toISOString()
-                });
-                console.log(`❌ 同步失败: ${domain} - ${error.message}`);
+    fs.writeFileSync(METADATA_FILE, JSON.stringify(metadata, null, 2));
+    log(`更新元数据: ${cachedManifests.length} 个工具`, 'success');
+}
+
+// 主函数
+async function main() {
+    log('开始同步清单文件');
+
+    // 确保缓存目录存在
+    if (!fs.existsSync(DOMAINS_CACHE_DIR)) {
+        fs.mkdirSync(DOMAINS_CACHE_DIR, { recursive: true });
+        log(`创建缓存目录: ${DOMAINS_CACHE_DIR}`);
+    }
+
+    // 加载域名配置
+    const domains = loadConfig();
+    if (domains.length === 0) {
+        log('没有找到有效的域名配置', 'error');
+        process.exit(1);
+    }
+
+    log(`开始处理 ${domains.length} 个域名`);
+
+    // 并行获取所有域名的清单文件
+    const promises = domains.map(domain => fetchDomainManifest(domain));
+    const results = await Promise.all(promises);
+
+    // 过滤成功获取的结果
+    const validManifests = results.filter(result => result !== null);
+
+    if (validManifests.length === 0) {
+        log('没有找到任何有效的清单文件', 'warn');
+    } else {
+        log(`成功获取 ${validManifests.length} 个清单文件`, 'success');
+
+        // 保存缓存
+        const cachedManifests = [];
+        for (const manifestData of validManifests) {
+            const cacheResult = saveManifestCache(manifestData.domain, manifestData);
+            if (cacheResult) {
+                cachedManifests.push(cacheResult);
             }
         }
 
-        // 保存日志和元数据
-        saveSyncLog();
-        saveMetadata();
+        // 更新元数据
+        updateMetadata(cachedManifests);
 
-        // 输出同步结果
-        console.log('\n=== 同步完成 ===');
-        console.log(`成功: ${state.successCount}`);
-        console.log(`失败: ${state.failureCount}`);
-        console.log(`成功率: ${(state.successCount / (state.successCount + state.failureCount) * 100).toFixed(1)}%`);
-
-        // 设置GitHub Actions输出
-        if (process.env.GITHUB_OUTPUT) {
-            const fs = require('fs');
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `has_changes=${state.successCount > 0}\n`);
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `success_count=${state.successCount}\n`);
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `failure_count=${state.failureCount}\n`);
-        }
-
-    } catch (error) {
-        console.error('同步过程出现严重错误:', error);
-        process.exit(1);
+        log(`同步完成: 共缓存 ${cachedManifests.length} 个工具清单`, 'success');
     }
 }
 
 // 运行主函数
-if (require.main === module) {
-    main().catch(console.error);
-}
-
-module.exports = { main, fetchManifest, processWildcard };
+main().catch(error => {
+    log(`同步失败: ${error.message}`, 'error');
+    process.exit(1);
+});

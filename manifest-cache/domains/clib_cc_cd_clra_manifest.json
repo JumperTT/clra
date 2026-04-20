@@ -1,0 +1,13 @@
+{
+  "name": "CLRA 示例工具",
+  "developer": "CLRA 开发团队",
+  "version": "1.0.0",
+  "update_content": "修复了若干bug\n增加了新功能",
+  "description": "这是一个示例工具，用于演示CLRA分发平台的功能。\n支持多行描述文本。",
+  "url": "https://example.com",
+  "download_url": [
+    "主下载:https://example.com/download",
+    "备用下载:https://example.com/alt"
+  ],
+  "icon_url": "https://via.placeholder.com/40x40/007bff/ffffff?text=CLRA"
+}
