@@ -1,6 +1,6 @@
 {
-  "last_sync": "2026-04-21T09:25:57.758Z",
-  "total_tools": 6,
+  "last_sync": "2026-04-21T11:06:33.109Z",
+  "total_tools": 5,
   "domains": [
     {
       "domain": "clib.cc.cd",
@@ -13,12 +13,6 @@
       "cache_file": "fec_hvk_cc_cd_jfkl_manifest.json",
       "tool_name": "Free eClass",
       "version": "6.0.3"
-    },
-    {
-      "domain": "*.jfglss.icu",
-      "cache_file": "__jfglss_icu_clra_manifest.json",
-      "tool_name": "机房管理杀手",
-      "version": "0.0.16"
     },
     {
       "domain": "maxlhy0424.is-a.dev",
