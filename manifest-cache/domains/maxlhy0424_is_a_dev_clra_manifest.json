@@ -3,7 +3,7 @@
   "developer": "MaxLHy0424",
   "version": "7.1.5",
   "update_content": "修复若干问题，优化性能。",
-  "description": "现代 C++ 编写，支持破解：\n机房管理助手、极域电子教室（全版本）、\n联想智能云教室、红蜘蛛多媒体网络教室、\n凌波网络教室、Veyon",
+  "description": "现代 C++ 编写，支持破解：\n机房管理助手、极域电子教室（全版本）、\n联想智能云教室、红蜘蛛多媒体网络教室、\n凌波网络教室、Veyon、WorkWin",
   "url": "https://github.com/MaxLHy0424/SCLTK",
   "download_url": [
     "32 位通用版: https://maxlhy0424.is-a.dev/assets/SCLTK/SCLTK-i686-msvcrt.exe",
