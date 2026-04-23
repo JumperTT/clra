@@ -1,6 +1,6 @@
 {
-  "last_sync": "2026-04-23T13:28:28.221Z",
-  "total_tools": 5,
+  "last_sync": "2026-04-23T15:52:42.153Z",
+  "total_tools": 3,
   "domains": [
     {
       "domain": "clib.cc.cd",
@@ -9,22 +9,10 @@
       "version": "B11"
     },
     {
-      "domain": "fec-hvk.cc.cd",
-      "cache_file": "fec_hvk_cc_cd_jfkl_manifest.json",
-      "tool_name": "Free eClass",
-      "version": "6.0.3"
-    },
-    {
       "domain": "maxlhy0424.is-a.dev",
       "cache_file": "maxlhy0424_is_a_dev_clra_manifest.json",
       "tool_name": "SCLTK",
       "version": "7.1.5"
-    },
-    {
-      "domain": "*.pp1p.cfd",
-      "cache_file": "__pp1p_cfd_clra_manifest.json",
-      "tool_name": "ClassZero",
-      "version": "1.4.1"
     },
     {
       "domain": "bk.lzh173.chat",
