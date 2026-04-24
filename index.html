@@ -198,20 +198,6 @@
             };
 
             /**
-             * 生成随机字符串用于泛域名替换
-             * @param {number} length - 字符串长度，默认为16
-             * @returns {string} 随机字符串
-             */
-            function generateRandomString(length = 16) {
-                const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_';
-                let result = '';
-                for (let i = 0; i < length; i++) {
-                    result += chars.charAt(Math.floor(Math.random() * chars.length));
-                }
-                return result;
-            }
-
-            /**
              * 处理泛域名，将 * 替换为随机字符串
              * @param {string} domain - 原始域名
              * @returns {string} 处理后的域名
