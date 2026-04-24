@@ -398,9 +398,6 @@
                     return;
                 }
 
-                // 按工具名称排序
-                state.tools.sort((a, b) => a.name.localeCompare(b.name));
-
                 const toolsHtml = state.tools.map(tool => createToolCard(tool)).join('');
                 toolsGrid.innerHTML = toolsHtml;
 
