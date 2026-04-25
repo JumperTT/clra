@@ -2,7 +2,7 @@ name: Sync Manifests
 
 on:
   schedule:
-    - cron: '0 6-16/1 * * *'  # 北京时间6-16点每小时执行
+    - cron: '0 6-22/1 * * *'  # 北京时间6-22点每小时执行
   workflow_dispatch:
 
 jobs:
