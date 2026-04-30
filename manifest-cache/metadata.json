@@ -1,6 +1,6 @@
 {
-  "last_sync": "2026-04-29T22:55:46.652Z",
-  "total_tools": 4,
+  "last_sync": "2026-04-30T08:20:31.713Z",
+  "total_tools": 3,
   "domains": [
     {
       "domain": "clib.cc.cd",
@@ -19,12 +19,6 @@
       "cache_file": "maxlhy0424_is_a_dev_clra_manifest.json",
       "tool_name": "SCLTK",
       "version": "7.1.5"
-    },
-    {
-      "domain": "*.pp1p.cfd",
-      "cache_file": "__pp1p_cfd_clra_manifest.json",
-      "tool_name": "ClassZero",
-      "version": "1.4.1"
     }
   ],
   "version": "1.0.0"
